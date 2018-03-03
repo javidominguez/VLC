@@ -6,6 +6,7 @@
 # November 2015 by Javi Dominguez (Javichi)
 
 import appModuleHandler
+import addonHandler
 from NVDAObjects.IAccessible import IAccessible
 import controlTypes
 import api
@@ -13,6 +14,8 @@ import winUser
 import ui
 import tones
 from time import sleep
+
+addonHandler.initTranslation()
 
 class AppModule(appModuleHandler.AppModule):
 	
@@ -60,9 +63,9 @@ class VLC_mainWindow(IAccessible):
 			except:
 				return("")
 			if hours > 1:
-				cTime = _("%d hours " % hours)
+				cTime = _("%d hours ") % hours
 			else:
-				cTime = _("%d hour " % hours)
+				cTime = _("%d hour ") % hours
 		else:
 			minutes, seconds = t
 			cTime = ""
@@ -73,19 +76,19 @@ class VLC_mainWindow(IAccessible):
 			return("")
 		if minutes > 0:
 			if minutes > 1:
-				cTime = _("%s%d minutes " % (cTime, minutes))
+				cTime = _("%s%d minutes ") % (cTime, minutes)
 			else:
-				cTime = _("%s%d minute " % (cTime, minutes))
+				cTime = _("%s%d minute ") % (cTime, minutes)
 		if seconds > 1:
-			cTime = _("%s %d seconds" % (cTime, seconds))
+			cTime = _("%s %d seconds") % (cTime, seconds)
 		else:
-			cTime = _("%s %d second" % (cTime, seconds))
+			cTime = _("%s %d second") % (cTime, seconds)
 		return (cTime)
 
 	def isPlaying(self):
 		"looks in play/pause button to see if it's playing"
 		obj = api.getForegroundObject()
-		if "Pause" in obj.children[2].children[3].children[5].description:
+		if "Pause" in obj.getChild(2).getChild(3).getChild(5).description:
 			return(True)
 		return(False)
 		
@@ -93,7 +96,7 @@ class VLC_mainWindow(IAccessible):
 		">Looks if is checked: c=1=Shuffle and c=2=Repeat"
 		obj = api.getForegroundObject()
 		try:
-			if controlTypes.STATE_CHECKED in obj.children[2].children[3].children[3:][-c].states:
+			if controlTypes.STATE_CHECKED in obj.getChild(2).getChild(3).children[3:][-c].states:
 				return(True)
 		except:
 			pass
@@ -101,31 +104,31 @@ class VLC_mainWindow(IAccessible):
 		
 	def sayElapsedTime(self):
 		obj = api.getForegroundObject()
-		elapsedTime = obj.children[1].children[3].name.split("/")[0]
+		elapsedTime = obj.getChild(1).getChild(3).name.split("/")[0]
 		ui.message(self.composeTime(elapsedTime))
 		
 	def moveToItem(self, index):
 		obj = api.getForegroundObject()
 		toolPaneItems = []
 		# Playback controls
-		for item in obj.children[2].children[3].children[3:]:
+		for item in obj.getChild(2).getChild(3).children[3:]:
 			if controlTypes.STATE_INVISIBLE not in item.states and item.role != controlTypes.ROLE_GRIP:
 				toolPaneItems.append(item)
 		# Add advanced controls
-		for item in obj.children[2].children[3].children[0].children:
+		for item in obj.getChild(2).getChild(3).firstChild.children:
 			if controlTypes.STATE_INVISIBLE not in item.states:
 				toolPaneItems.append(item)
 		# Add TV text controls
-		for item in obj.children[2].children[3].children[1].children:
+		for item in obj.getChild(2).getChild(3).getChild(1).children:
 			if controlTypes.STATE_INVISIBLE not in item.states:
 				toolPaneItems.append(item)
 		# Add DVD controls
-		for item in obj.children[2].children[3].children[2].children:
+		for item in obj.getChild(2).getChild(3).getChild(2).children:
 			if controlTypes.STATE_INVISIBLE not in item.states:
 				toolPaneItems.append(item)
 		# Add mute button
-		if controlTypes.STATE_INVISIBLE not in obj.children[2].children[3].children[3].children[0].states:
-			toolPaneItems.append(obj.children[2].children[3].children[3].children[0])
+		if controlTypes.STATE_INVISIBLE not in obj.getChild(2).getChild(3).getChild(3).firstChild.states:
+			toolPaneItems.append(obj.getChild(2).getChild(3).getChild(3).firstChild)
 		if len(toolPaneItems) == 0:
 			ui.message(_("There are no controls available"))
 			return()
@@ -165,13 +168,13 @@ class VLC_mainWindow(IAccessible):
 	def script_readStatusBar(self, gesture):
 		"Reads the status bar information"
 		obj = api.getForegroundObject()
-		if obj.children[1].role == controlTypes.ROLE_STATUSBAR:
+		if obj.getChild(1).role == controlTypes.ROLE_STATUSBAR:
 			try:
-				ui.message("%s " % obj.children[1].children[1].name)
-				elapsedTime, totalTime = obj.children[1].children[3].name.split("/")
+				ui.message("%s " % obj.getChild(1).getChild(1).name)
+				elapsedTime, totalTime = obj.getChild(1).getChild(3).name.split("/")
 				elapsedTime = self.composeTime(elapsedTime)
 				totalTime = self.composeTime(totalTime)
-				ui.message(_("%s of %s" % (elapsedTime, totalTime)))
+				ui.message(_("%s of %s") % (elapsedTime, totalTime))
 				if self.isPlaying():
 					ui.message(_(" playing"))
 				if self.isChecked(2):
@@ -187,7 +190,7 @@ class VLC_mainWindow(IAccessible):
 		obj = api.getForegroundObject()
 		obj = obj.firstChild
 		while obj and obj.role != controlTypes.ROLE_SPLITBUTTON:
-			obj = obj.simpleNext
+			obj = obj.next
 		try:
 			playlist = []
 			for item in obj.simpleFirstChild.children:
@@ -339,7 +342,7 @@ class VLC_mediaInfo(IAccessible):
 		obj = api.getFocusObject()
 		if obj.role == controlTypes.ROLE_EDITABLETEXT\
 		and obj.simpleNext.role == controlTypes.ROLE_TABCONTROL:
-			obj.parent.children[1].setFocus()
+			obj.parent.getChild(1).setFocus()
 		else:
 			gesture.send()
 		
