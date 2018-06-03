@@ -7,20 +7,24 @@
 
 import appModuleHandler
 import addonHandler
-from NVDAObjects.IAccessible import IAccessible
+from NVDAObjects.IAccessible import IAccessible, qt
 import controlTypes
 import api
 import winUser
 import ui
+from speech import speakObject
 import tones
 from time import sleep
 
 addonHandler.initTranslation()
 
 class AppModule(appModuleHandler.AppModule):
+	tpItemIndex = 100
 
 	def chooseNVDAObjectOverlayClasses(self, obj, clsList):
-		if obj.windowClassName == "QWidget" and obj.role == controlTypes.ROLE_BORDER:
+		if obj.role == controlTypes.ROLE_APPLICATION:
+			clsList.insert(0, VLC_application)
+		elif obj.windowClassName == u'Qt5QWindowIcon' and (obj.role == controlTypes.ROLE_BORDER or obj.role == controlTypes.ROLE_PANE):
 			if obj.childCount == 3:
 				obj.role = controlTypes.ROLE_STATUSBAR
 			else:
@@ -30,17 +34,19 @@ class AppModule(appModuleHandler.AppModule):
 			clsList.insert(0, VLC_spinButton)
 		elif obj.role == controlTypes.ROLE_WINDOW:
 			clsList.insert(0, VLC_mainWindow)
-		elif obj.windowStyle == -1764884480:
+		elif obj.windowStyle == -1764884480 and obj.isFocusable:
 			try:
-				if obj.simplePrevious.role == controlTypes.ROLE_STATICTEXT:
-					obj.name = obj.simplePrevious.name 
+				if obj.previous.role == controlTypes.ROLE_STATICTEXT:
+					obj.name = obj.previous.name 
 				clsList.insert(0, VLC_mediaInfo)
 			except AttributeError:
 				pass
-		elif obj.role == controlTypes.ROLE_SPLITBUTTON\
-		or (obj.role == controlTypes.ROLE_GRIP and obj.childCount == 0):
-			obj.role = controlTypes.ROLE_PANE
-			clsList.insert(0, VLC_pane)
+
+	def event_foreground(self, obj, nextHandler):
+		appWindow = api.getForegroundObject().parent
+		if appWindow.role == controlTypes.ROLE_APPLICATION:
+			api.setFocusObject(appWindow)
+		nextHandler()
 
 	def event_gainFocus(self, obj, nextHandler):
 		if controlTypes.STATE_INVISIBLE in obj.states:
@@ -57,10 +63,18 @@ class AppModule(appModuleHandler.AppModule):
 	"kb:NVDA+F5": "controlPaneToForeground"
 	}
 
+class VLC_application(qt.Application):
+	pass
+
 class VLC_mainWindow(IAccessible):
-	tpItemIndex = 100
-	playlist = []
-	playlistIndex = -1
+
+	def event_foreground(self):
+		api.setFocusObject(self)
+
+	def event_gainFocus(self):
+		ui.message(self.name)
+		self.description = ""
+		self.moveToItem(self.appModule.tpItemIndex)
 
 	def composeTime(self, t="00:00"):
 		"Convert time from hh:mm:ss to h hours m minutes s seconds"
@@ -117,7 +131,7 @@ class VLC_mainWindow(IAccessible):
 		ui.message(self.composeTime(elapsedTime))
 
 	def moveToItem(self, index):
-		toolPaneItems = filter(lambda item: controlTypes.STATE_INVISIBLE not in item.states and item.role != controlTypes.ROLE_GRIP  and item.role != controlTypes.ROLE_BORDER,
+		toolPaneItems = filter(lambda item: controlTypes.STATE_INVISIBLE not in item.states and controlTypes.STATE_UNAVAILABLE not in item.states and item.role != controlTypes.ROLE_GRIP  and item.role != controlTypes.ROLE_BORDER,
 		self.getChild(2).getChild(3).children[3:]+\
 		self.getChild(2).getChild(3).firstChild.children+\
 		self.getChild(2).getChild(3).getChild(1).children+\
@@ -132,28 +146,20 @@ class VLC_mainWindow(IAccessible):
 			index = 1
 		if index < 1:
 			index = len(toolPaneItems)-1
-		ui.message(toolPaneItems[index].description)
-		if toolPaneItems[index].role == controlTypes.ROLE_CHECKBOX:
-			if controlTypes.STATE_CHECKED in toolPaneItems[index].states:
-				ui.message(_("checked"))
-			else:
-				ui.message(_("not checked"))
-		if controlTypes.STATE_UNAVAILABLE in toolPaneItems[index].states:
-			ui.message(_("unavailable"))
+		speakObject(toolPaneItems[index])
 		api.setNavigatorObject(toolPaneItems[index])
-		api.moveMouseToNVDAObject(toolPaneItems[index])
 		api.setMouseObject(toolPaneItems[index])
-		self.tpItemIndex = index
+		self.appModule.tpItemIndex = index
 
 	def script_moveToNextItem(self, gesture):
 		try:
-			self.moveToItem(self.tpItemIndex+1)
+			self.moveToItem(self.appModule.tpItemIndex+1)
 		except IOError:
 			gesture.send()
 
 	def script_moveToPreviousItem(self, gesture):
 		try:
-			self.moveToItem(self.tpItemIndex-1)
+			self.moveToItem(self.appModule.tpItemIndex-1)
 		except:
 			gesture.send()
 
@@ -186,13 +192,10 @@ class VLC_mainWindow(IAccessible):
 		obj = api.getNavigatorObject()
 		try:
 			obj.doAction()
-			sleep(0.2)
-			if obj.role == controlTypes.ROLE_CHECKBOX:
-				if controlTypes.STATE_CHECKED in obj.states:
-					ui.message(_("checked"))
-				else:
-					ui.message(_("not checked"))
-			ui.message(obj.description)
+			for state in obj.states:
+				ui.message(controlTypes.stateLabels[state])
+			if obj.role == controlTypes.ROLE_CHECKBOX and controlTypes.STATE_CHECKED not in obj.states:
+				ui.message(_("unchecked"))
 		except:
 			if self.mouseClick():
 				types = (controlTypes.ROLE_LISTITEM, controlTypes.ROLE_TREEVIEWITEM)
@@ -233,7 +236,8 @@ class VLC_mainWindow(IAccessible):
 
 	def script_sayVolume(self, gesture):
 		gesture.send()
-		ui.message(_("Volume %s") % self.children[2].children[3].children[3].children[1].value)
+		if self.children[2].children[3].children[3].children[1].value and api.getNavigatorObject().role != controlTypes.ROLE_MENUITEM:
+			ui.message(_("Volume %s") % self.children[2].children[3].children[3].children[1].value)
 
 	__gestures = {
 		"kb:I": "readStatusBar",
