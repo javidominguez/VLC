@@ -8,6 +8,7 @@
 import appModuleHandler
 import addonHandler
 from NVDAObjects.IAccessible import IAccessible, qt
+from NVDAObjects.behaviors import Dialog
 import controlTypes
 import api
 import winUser
@@ -15,6 +16,7 @@ import ui
 from speech import speakObject
 import tones
 from time import sleep
+from threading import Timer
 
 addonHandler.initTranslation()
 
@@ -41,6 +43,8 @@ class AppModule(appModuleHandler.AppModule):
 				clsList.insert(0, VLC_mediaInfo)
 			except AttributeError:
 				pass
+		elif obj.role == controlTypes.ROLE_DIALOG:
+			clsList.insert(0, VLC_Dialog)
 
 	def event_foreground(self, obj, nextHandler):
 		appWindow = api.getForegroundObject().parent
@@ -63,18 +67,39 @@ class AppModule(appModuleHandler.AppModule):
 	"kb:NVDA+F5": "controlPaneToForeground"
 	}
 
+class VLC_Dialog(Dialog):
+	pass
+
 class VLC_application(qt.Application):
 	pass
 
 class VLC_mainWindow(IAccessible):
 
+	def _get_playbackControls(self):
+		controls =\
+		self.getChild(2).getChild(3).children[3:]+\
+		self.getChild(2).getChild(3).firstChild.children+\
+		self.getChild(2).getChild(3).getChild(1).children+\
+		list(self.getChild(2).getChild(3).getChild(2).recursiveDescendants)
+		# Add mute button
+		if controlTypes.STATE_INVISIBLE not in self.getChild(2).getChild(3).getChild(3).firstChild.states:
+			controls.append(self.getChild(2).getChild(3).getChild(3).firstChild)
+			return controls
+
+	def _get_volumeDisplay(self):
+		return self.getChild(2).getChild(3).getChild(3).getChild(1)
+
+	def _get_playPauseButton(self):
+		fg = api.getForegroundObject()
+		return fg.getChild(2).getChild(3).getChild(5)
+
 	def event_foreground(self):
 		api.setFocusObject(self)
 
 	def event_gainFocus(self):
-		ui.message(self.name)
 		self.description = ""
-		self.moveToItem(self.appModule.tpItemIndex)
+		if not self.focusDialog():
+			self.moveToItem(self.appModule.tpItemIndex)
 
 	def composeTime(self, t="00:00"):
 		"Convert time from hh:mm:ss to h hours m minutes s seconds"
@@ -110,9 +135,8 @@ class VLC_mainWindow(IAccessible):
 
 	def isPlaying(self):
 		"looks in play/pause button to see if it's playing"
-		obj = api.getForegroundObject()
 		# Translators: As seen in the button Play/Pause of the interface
-		if _("Pause") in obj.getChild(2).getChild(3).getChild(5).description:
+		if _("Pause") in self.playPauseButton.description:
 			return(True)
 		return(False)
 
@@ -131,14 +155,7 @@ class VLC_mainWindow(IAccessible):
 		ui.message(self.composeTime(elapsedTime))
 
 	def moveToItem(self, index):
-		toolPaneItems = filter(lambda item: controlTypes.STATE_INVISIBLE not in item.states and controlTypes.STATE_UNAVAILABLE not in item.states and item.role != controlTypes.ROLE_GRIP  and item.role != controlTypes.ROLE_BORDER,
-		self.getChild(2).getChild(3).children[3:]+\
-		self.getChild(2).getChild(3).firstChild.children+\
-		self.getChild(2).getChild(3).getChild(1).children+\
-		list(self.getChild(2).getChild(3).getChild(2).recursiveDescendants))
-		# Add mute button
-		if controlTypes.STATE_INVISIBLE not in self.getChild(2).getChild(3).getChild(3).firstChild.states:
-			toolPaneItems.append(self.getChild(2).getChild(3).getChild(3).firstChild)
+		toolPaneItems = filter(lambda item: controlTypes.STATE_INVISIBLE not in item.states and controlTypes.STATE_UNAVAILABLE not in item.states and item.role != controlTypes.ROLE_GRIP  and item.role != controlTypes.ROLE_BORDER, self.playbackControls)
 		if len(toolPaneItems) == 0:
 			ui.message(_("There are no controls available"))
 			return()
@@ -181,15 +198,17 @@ class VLC_mainWindow(IAccessible):
 				ui.message(_("%s of %s") % (elapsedTime, totalTime))
 				if self.isPlaying():
 					ui.message(_(" playing"))
-				if self.isChecked(2):
-					ui.message(_("Repeat mode"))
-				if self.isChecked(1):
-					ui.message(_("Shuffle mode"))
+				ui.message(", ".join(
+				["%s %s" % (o.description, controlTypes.stateLabels[controlTypes.STATE_CHECKED]) for o in\
+				filter(lambda o: o.role == controlTypes.ROLE_CHECKBOX and controlTypes.STATE_CHECKED in o.states, self.playbackControls)]))
 			except:
 				pass
 
 	def script_doAction(self, gesture):
 		obj = api.getNavigatorObject()
+		if obj not in self.playbackControls:
+			gesture.send()
+			return
 		try:
 			obj.doAction()
 			for state in obj.states:
@@ -197,12 +216,13 @@ class VLC_mainWindow(IAccessible):
 			if obj.role == controlTypes.ROLE_CHECKBOX and controlTypes.STATE_CHECKED not in obj.states:
 				ui.message(_("unchecked"))
 		except:
-			if self.mouseClick():
-				types = (controlTypes.ROLE_LISTITEM, controlTypes.ROLE_TREEVIEWITEM)
-				if obj.role in types:
-					self.mouseClick()
+			api.moveMouseToNVDAObject(obj)
+			x, y = winUser.getCursorPos()
+			if api.getDesktopObject().objectFromPoint(x,y) == obj:
+				self.mouseClick()
 			else:
-				ui.message(_("This item is outside the window"))
+				tones.beep(200, 50)
+		self.focusDialog()
 
 	def mouseClick(self, button="left"):
 		if controlTypes.STATE_INVISIBLE in api.getMouseObject().states:
@@ -216,28 +236,42 @@ class VLC_mainWindow(IAccessible):
 			winUser.mouse_event(winUser.MOUSEEVENTF_RIGHTUP,0,0,None,None)
 			return(True)
 
+	def getDialog(self):
+		fg = api.getForegroundObject()
+		obj = fg.simpleNext
+		if obj:
+			return obj if obj.role == controlTypes.ROLE_DIALOG and controlTypes.STATE_INVISIBLE not in obj.states else None
+		return None
+
+	def focusDialog(self):
+		dlg = self.getDialog()
+		if not dlg: return False
+		if not dlg.setFocus():
+			api.moveMouseToNVDAObject(dlg)
+			self.mouseClick()
+		return True
+
 	def script_repeat(self, gesture):
 		ui.message(_("Repeat mode"))
 		gesture.send()
 		sleep(0.1)
 		if self.isChecked(2):
-			ui.message(_("Checked"))
+			ui.message(controlTypes.stateLabels[controlTypes.STATE_CHECKED])
 		else:
-			ui.message(_("not checked"))
+			ui.message(_("unchecked"))
 
 	def script_shuffle(self, gesture):
 		ui.message(_("Shuffle mode"))
 		gesture.send()
 		sleep(0.1)
 		if self.isChecked(1):
-			ui.message(_("Checked"))
+			ui.message(controlTypes.stateLabels[controlTypes.STATE_CHECKED])
 		else:
-			ui.message(_("not checked"))
+			ui.message(_("unchecked"))
 
 	def script_sayVolume(self, gesture):
 		gesture.send()
-		if self.children[2].children[3].children[3].children[1].value and api.getNavigatorObject().role != controlTypes.ROLE_MENUITEM:
-			ui.message(_("Volume %s") % self.children[2].children[3].children[3].children[1].value)
+		if self.volumeDisplay.value: ui.message(_("Volume %s") % self.volumeDisplay.value)
 
 	__gestures = {
 		"kb:I": "readStatusBar",
@@ -257,7 +291,7 @@ class VLC_mainWindow(IAccessible):
 		"kb:LeftArrow": "backAndForward",
 		"kb:upArrow": "sayVolume",
 		"kb:downArrow": "sayVolume",
-	"kb:Control+upArrow": "sayVolume",
+		"kb:Control+upArrow": "sayVolume",
 		"kb:Control+downArrow": "sayVolume",
 		"kb:enter": "doAction"
 		}
