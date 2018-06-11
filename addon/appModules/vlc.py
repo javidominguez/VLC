@@ -50,24 +50,28 @@ class AppModule(appModuleHandler.AppModule):
 	def chooseNVDAObjectOverlayClasses(self, obj, clsList):
 		if obj.role == controlTypes.ROLE_APPLICATION:
 			clsList.insert(0, VLC_application)
-		elif obj.windowClassName == u'Qt5QWindowIcon' and (obj.role == controlTypes.ROLE_BORDER or obj.role == controlTypes.ROLE_PANE):
-			if obj.childCount == 3:
-				obj.role = controlTypes.ROLE_STATUSBAR
-			else:
-				obj.role = controlTypes.ROLE_PANE
-			clsList.insert(0, VLC_pane)
-		elif obj.windowClassName == "QTool" and obj.role == controlTypes.ROLE_SPINBUTTON:
-			clsList.insert(0, VLC_spinButton)
-		elif obj.role == controlTypes.ROLE_WINDOW:
-			clsList.insert(0, VLC_mainWindow)
-		elif obj.windowStyle == -1764884480 and obj.isFocusable:
-			try:
-				if obj.previous.role == controlTypes.ROLE_STATICTEXT:
-					obj.name = obj.previous.name 
-				clsList.insert(0, VLC_mediaInfo)
-			except AttributeError:
-				pass
-		elif obj.role == controlTypes.ROLE_DIALOG:
+		if obj.windowClassName == u'Qt5QWindowIcon':
+			if obj.role == controlTypes.ROLE_BORDER or obj.role == controlTypes.ROLE_PANE:
+				if obj.childCount == 3:
+					obj.role = controlTypes.ROLE_STATUSBAR
+				else:
+					obj.role = controlTypes.ROLE_PANE
+				clsList.insert(0, VLC_pane)
+			elif obj.role == controlTypes.ROLE_SPINBUTTON:
+				clsList.insert(0, VLC_spinButton)
+			elif obj.role == controlTypes.ROLE_WINDOW and obj.firstChild.role == controlTypes.ROLE_MENUBAR:
+				clsList.insert(0, VLC_mainWindow)
+			elif obj.windowStyle == -1764884480 and obj.isFocusable:
+				try:
+					container = obj.container.container.container.container
+				except AttributeError:
+					pass
+				else:
+					if container and container.name and container.role == controlTypes.ROLE_PANE:
+						if obj.previous.role == controlTypes.ROLE_STATICTEXT:
+							obj.name = obj.previous.name 
+						clsList.insert(0, VLC_mediaInfo)
+		if obj.role == controlTypes.ROLE_DIALOG:
 			clsList.insert(0, VLC_Dialog)
 
 	def event_foreground(self, obj, nextHandler):
