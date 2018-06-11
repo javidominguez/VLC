@@ -20,6 +20,11 @@ import gui
 import wx
 import config
 from gui import settingsDialogs
+try:
+	from gui import NVDASettingsDialog
+	from gui.settingsDialogs import SettingsPanel
+except:
+	SettingsPanel = object
 
 addonHandler.initTranslation()
 
@@ -30,17 +35,26 @@ config.conf.spec['VLC']=confspec
 
 class AppModule(appModuleHandler.AppModule):
 
+	#TRANSLATORS: category for VLC input gestures
+	scriptCategory = _("VLC")
+
 	def __init__(self, *args, **kwargs):
 		super(AppModule, self).__init__(*args, **kwargs)
 		self.tpItemIndex = 100
-		self.prefsMenu = gui.mainFrame.sysTrayIcon.menu.GetMenuItems()[0].GetSubMenu()
-		#TRANSLATORS: The configuration option in NVDA Preferences menu
-		self.VLCSettingsItem = self.prefsMenu.Append(wx.ID_ANY, _(u"VLC settings..."), _(u"Change VLC appModule settings"))
-		gui.mainFrame.sysTrayIcon.Bind(wx.EVT_MENU, self.onVLCMenu, self.VLCSettingsItem)
+		if hasattr(settingsDialogs, 'SettingsPanel'):
+			NVDASettingsDialog.categoryClasses.append(VLCPanel)
+		else:
+			self.prefsMenu = gui.mainFrame.sysTrayIcon.menu.GetMenuItems()[0].GetSubMenu()
+			#TRANSLATORS: The configuration option in NVDA Preferences menu
+			self.VLCSettingsItem = self.prefsMenu.Append(wx.ID_ANY, _(u"VLC settings..."), _(u"Change VLC appModule settings"))
+			gui.mainFrame.sysTrayIcon.Bind(wx.EVT_MENU, self.onVLCMenu, self.VLCSettingsItem)
 
 	def terminate(self):
 		try:
-			self.prefsMenu.RemoveItem(self.VLCSettingsItem)
+			if hasattr(settingsDialogs, 'SettingsPanel'):
+				NVDASettingsDialog.categoryClasses.remove(VLCPanel)
+			else:
+				self.prefsMenu.RemoveItem(self.VLCSettingsItem)
 		except:
 			pass
 
@@ -100,8 +114,7 @@ class AppModule(appModuleHandler.AppModule):
 	script_toggleVerbosity.__doc__ = _("Toggle verbosity: if enabled, it will announce the elapsed time when you slide the track")
 
 	__gestures = {
-	"kb:NVDA+F5": "controlPaneToForeground",
-	"kb:F2":"toggleVerbosity"
+	"kb:NVDA+F5": "controlPaneToForeground"
 	}
 
 class VLC_Dialog(Dialog):
@@ -111,6 +124,9 @@ class VLC_application(qt.Application):
 	pass
 
 class VLC_mainWindow(IAccessible):
+
+	#TRANSLATORS: category for VLC input gestures
+	scriptCategory = _("VLC")
 
 	def _get_playbackControls(self):
 		controls =\
@@ -380,5 +396,16 @@ class VLCSettings(settingsDialogs.SettingsDialog):
 
 	def onOk(self, evt):
 		config.conf['VLC']['reportTimeWhenTrackSlips'] = self.reportTimeEnabled.GetValue()
-		# applyConfig()
 		super(VLCSettings, self).onOk(evt)
+
+class VLCPanel(SettingsPanel):
+	#TRANSLATORS: Settings dialog title
+	title=_(u"VLC appModule settings")
+	def makeSettings(self, sizer):
+		#TRANSLATORS: Report time checkbox
+		self.reportTimeEnabled=wx.CheckBox(self, wx.NewId(), label=_(u"Report time when track slips"))
+		self.reportTimeEnabled.SetValue(config.conf['VLC']['reportTimeWhenTrackSlips'])
+		sizer.Add(self.reportTimeEnabled,border=10,flag=wx.BOTTOM)
+
+	def onSave(self):
+		config.conf['VLC']['reportTimeWhenTrackSlips'] = self.reportTimeEnabled.GetValue()
