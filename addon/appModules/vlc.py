@@ -46,7 +46,7 @@ class AppModule(appModuleHandler.AppModule):
 		else:
 			self.prefsMenu = gui.mainFrame.sysTrayIcon.menu.GetMenuItems()[0].GetSubMenu()
 			#TRANSLATORS: The configuration option in NVDA Preferences menu
-			self.VLCSettingsItem = self.prefsMenu.Append(wx.ID_ANY, _(u"VLC settings..."), _(u"Change VLC appModule settings"))
+			self.VLCSettingsItem = self.prefsMenu.Append(wx.ID_ANY, u"VLC...", _(u"Change VLC appModule settings"))
 			gui.mainFrame.sysTrayIcon.Bind(wx.EVT_MENU, self.onVLCMenu, self.VLCSettingsItem)
 
 	def terminate(self):
@@ -85,7 +85,7 @@ class AppModule(appModuleHandler.AppModule):
 						if obj.previous.role == controlTypes.ROLE_STATICTEXT:
 							obj.name = obj.previous.name 
 						clsList.insert(0, VLC_mediaInfo)
-		if obj.role == controlTypes.ROLE_DIALOG:
+		if obj.role == controlTypes.ROLE_DIALOG and (obj.windowClassName == u'Qt5QWindowToolSaveBits' or obj.windowClassName == u'Qt5QWindowIcon'):
 			clsList.insert(0, VLC_Dialog)
 
 	def event_foreground(self, obj, nextHandler):
@@ -111,14 +111,17 @@ class AppModule(appModuleHandler.AppModule):
 		else:
 			config.conf['VLC']['reportTimeWhenTrackSlips'] = True
 	#TRANSLATORS: message shown in Input gestures dialog for this script
-	script_toggleVerbosity.__doc__ = _("Toggle verbosity: if enabled, it will announce the elapsed time when you slide the track")
+	script_toggleVerbosity.__doc__ = _("Toggle verbosity: if enabled, it will announce the elapsed time and volume")
 
 	__gestures = {
 	"kb:NVDA+F5": "controlPaneToForeground"
 	}
 
 class VLC_Dialog(Dialog):
-	pass
+
+	def event_gainFocus(self):
+		self.reportFocus()
+		api.setForegroundObject(self)
 
 class VLC_application(qt.Application):
 	pass
@@ -150,6 +153,7 @@ class VLC_mainWindow(IAccessible):
 		api.setFocusObject(self)
 
 	def event_gainFocus(self):
+		api.setForegroundObject(self)
 		self.description = ""
 		if not self.focusDialog():
 			self.moveToItem(self.appModule.tpItemIndex)
@@ -387,7 +391,7 @@ class VLCSettings(settingsDialogs.SettingsDialog):
 	title=_(u"VLC appModule settings")
 	def makeSettings(self, sizer):
 		#TRANSLATORS: Report time checkbox
-		self.reportTimeEnabled=wx.CheckBox(self, wx.NewId(), label=_(u"Report time when track slips"))
+		self.reportTimeEnabled=wx.CheckBox(self, wx.NewId(), label=_(u"Announce elapsed time and volume"))
 		self.reportTimeEnabled.SetValue(config.conf['VLC']['reportTimeWhenTrackSlips'])
 		sizer.Add(self.reportTimeEnabled,border=10,flag=wx.BOTTOM)
 
@@ -399,11 +403,11 @@ class VLCSettings(settingsDialogs.SettingsDialog):
 		super(VLCSettings, self).onOk(evt)
 
 class VLCPanel(SettingsPanel):
-	#TRANSLATORS: Settings dialog title
-	title=_(u"VLC appModule settings")
+	#TRANSLATORS: Settings panel title
+	title=_(u"VLC")
 	def makeSettings(self, sizer):
 		#TRANSLATORS: Report time checkbox
-		self.reportTimeEnabled=wx.CheckBox(self, wx.NewId(), label=_(u"Report time when track slips"))
+		self.reportTimeEnabled=wx.CheckBox(self, wx.NewId(), label=_(u"Announce elapsed time and volume"))
 		self.reportTimeEnabled.SetValue(config.conf['VLC']['reportTimeWhenTrackSlips'])
 		sizer.Add(self.reportTimeEnabled,border=10,flag=wx.BOTTOM)
 
