@@ -44,9 +44,9 @@ class AppModule(appModuleHandler.AppModule):
 		if hasattr(settingsDialogs, 'SettingsPanel'):
 			NVDASettingsDialog.categoryClasses.append(VLCPanel)
 		else:
-			self.prefsMenu = gui.mainFrame.sysTrayIcon.menu.GetMenuItems()[0].GetSubMenu()
+			self.prefsMenu = gui.mainFrame.sysTrayIcon.preferencesMenu
 			#TRANSLATORS: The configuration option in NVDA Preferences menu
-			self.VLCSettingsItem = self.prefsMenu.Append(wx.ID_ANY, u"VLC...", _(u"Change VLC appModule settings"))
+			self.VLCSettingsItem = self.prefsMenu.Append(wx.ID_ANY, u"VLC...", _("Change VLC appModule settings"))
 			gui.mainFrame.sysTrayIcon.Bind(wx.EVT_MENU, self.onVLCMenu, self.VLCSettingsItem)
 
 	def terminate(self):
@@ -73,7 +73,7 @@ class AppModule(appModuleHandler.AppModule):
 				clsList.insert(0, VLC_pane)
 			elif obj.role == controlTypes.ROLE_SPINBUTTON:
 				clsList.insert(0, VLC_spinButton)
-			elif obj.role == controlTypes.ROLE_WINDOW and obj.firstChild.role == controlTypes.ROLE_MENUBAR:
+			elif obj.role == controlTypes.ROLE_WINDOW and obj.firstChild and obj.firstChild.role == controlTypes.ROLE_MENUBAR:
 				clsList.insert(0, VLC_mainWindow)
 			elif obj.windowStyle == -1764884480 and obj.isFocusable:
 				try:
@@ -102,8 +102,13 @@ class AppModule(appModuleHandler.AppModule):
 
 	def script_controlPaneToForeground(self, gesture):
 		obj = api.getForegroundObject()
-		api.setFocusObject(obj)
-		tones.beep(1200, 30)
+		if hasattr(obj, "playbackControls"):
+			api.setFocusObject(obj)
+			tones.beep(1200, 30)
+		else:
+			tones.beep(200,30)
+	#TRANSLATORS: message shown in Input gestures dialog for this script
+	script_controlPaneToForeground.__doc__ = _("Use it in the main window if tabulating between playback controls stopped working. It'll tries to bring the focus to the playback control pane to get it to work again.")
 
 	def script_toggleVerbosity(self, gesture):
 		if config.conf['VLC']['reportTimeWhenTrackSlips']:
@@ -168,8 +173,10 @@ class VLC_mainWindow(IAccessible):
 			except ValueError:
 				return("")
 			if hours > 1:
+				#TRANSLATORS: Expressing time, several hours, in plural. Maintain the space at the end to separate the next message that will be added.
 				cTime = _("%d hours ") % hours
 			else:
+				#TRANSLATORS: Expressing time, one hour, in singular. Maintain the space at the end to separate the next message that will be added.
 				cTime = _("%d hour ") % hours
 		else:
 			minutes, seconds = t
@@ -181,12 +188,16 @@ class VLC_mainWindow(IAccessible):
 			return("")
 		if minutes > 0:
 			if minutes > 1:
+				#TRANSLATORS: Expressing time, several minutes, in plural. Maintain the space at the end to separate the next message that will be added.
 				cTime = _("%s%d minutes ") % (cTime, minutes)
 			else:
+				#TRANSLATORS: Expressing time, one minute, in singular. Maintain the space at the end to separate the next message that will be added.
 				cTime = _("%s%d minute ") % (cTime, minutes)
 		if seconds > 1:
+			#TRANSLATORS: Expressing time, several seconds, in plural.
 			cTime = _("%s %d seconds") % (cTime, seconds)
 		else:
+			#TRANSLATORS: Expressing time, one second, in singular.
 			cTime = _("%s %d second") % (cTime, seconds)
 		return cTime
 
@@ -214,6 +225,7 @@ class VLC_mainWindow(IAccessible):
 	def moveToItem(self, index):
 		toolPaneItems = filter(lambda item: controlTypes.STATE_INVISIBLE not in item.states and controlTypes.STATE_UNAVAILABLE not in item.states and item.role != controlTypes.ROLE_GRIP  and item.role != controlTypes.ROLE_BORDER, self.playbackControls)
 		if len(toolPaneItems) == 0:
+			#TRANSLATORS: Message when there are no playback controls visible on screen, or the addon can't find them.
 			ui.message(_("There are no controls available"))
 			return()
 		if index >= len(toolPaneItems):
@@ -245,14 +257,17 @@ class VLC_mainWindow(IAccessible):
 		if self.getChild(1).role == controlTypes.ROLE_STATUSBAR:
 			try:
 				if not self.getChild(1).getChild(1).name:
+					#TRANSLATORS: Message when the playlist is empty and there is no track to play
 					ui.message(_("Empty"))
 					return
 				ui.message("%s " % self.getChild(1).getChild(1).name)
 				elapsedTime, totalTime = self.getChild(1).getChild(3).name.split("/")
 				elapsedTime = self.composeTime(elapsedTime)
 				totalTime = self.composeTime(totalTime)
+				#TRANSLATORS: elapsed time of total time
 				ui.message(_("%s of %s") % (elapsedTime, totalTime))
 				if self.isPlaying():
+					#TRANSLATORS: When announces that a track is playing
 					ui.message(_(" playing"))
 				ui.message(", ".join(
 				["%s %s" % (o.description, controlTypes.stateLabels[controlTypes.STATE_CHECKED]) for o in\
@@ -388,10 +403,10 @@ class VLC_mediaInfo(IAccessible):
 
 class VLCSettings(settingsDialogs.SettingsDialog):
 	#TRANSLATORS: Settings dialog title
-	title=_(u"VLC appModule settings")
+	title=_("VLC appModule settings")
 	def makeSettings(self, sizer):
 		#TRANSLATORS: Report time checkbox
-		self.reportTimeEnabled=wx.CheckBox(self, wx.NewId(), label=_(u"Announce elapsed time and volume"))
+		self.reportTimeEnabled=wx.CheckBox(self, wx.NewId(), label=_("Announce elapsed time and volume"))
 		self.reportTimeEnabled.SetValue(config.conf['VLC']['reportTimeWhenTrackSlips'])
 		sizer.Add(self.reportTimeEnabled,border=10,flag=wx.BOTTOM)
 
@@ -404,10 +419,10 @@ class VLCSettings(settingsDialogs.SettingsDialog):
 
 class VLCPanel(SettingsPanel):
 	#TRANSLATORS: Settings panel title
-	title=_(u"VLC")
+	title=_("VLC")
 	def makeSettings(self, sizer):
 		#TRANSLATORS: Report time checkbox
-		self.reportTimeEnabled=wx.CheckBox(self, wx.NewId(), label=_(u"Announce elapsed time and volume"))
+		self.reportTimeEnabled=wx.CheckBox(self, wx.NewId(), label=_("Announce elapsed time and volume"))
 		self.reportTimeEnabled.SetValue(config.conf['VLC']['reportTimeWhenTrackSlips'])
 		sizer.Add(self.reportTimeEnabled,border=10,flag=wx.BOTTOM)
 
