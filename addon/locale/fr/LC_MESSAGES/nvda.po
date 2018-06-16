@@ -1,0 +1,104 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: vlc 1.0\n"
+"Report-Msgid-Bugs-To: nvda-translations@freelists.org\n"
+"POT-Creation-Date: 2015-10-30 22:00+1000\n"
+"PO-Revision-Date: 2016-03-03 14:58+0100\n"
+"Last-Translator: Bachir BENANOU <ben_bach@yahoo.fr>\n"
+"Language-Team: Rémy Ruiz <remyruiz@gmail.com>\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.8.7\n"
+
+#, python-format
+msgid "%d hours "
+msgstr "%d heures "
+
+#, python-format
+msgid "%d hour "
+msgstr "%d heure "
+
+#, python-format
+msgid "%s%d minutes "
+msgstr "%s%d minutes "
+
+#, python-format
+msgid "%s%d minute "
+msgstr "%s%d minute "
+
+#, python-format
+msgid "%s %d seconds"
+msgstr "%s %d secondes"
+
+#, python-format
+msgid "%s %d second"
+msgstr "%s %d seconde"
+
+msgid "There are no controls available"
+msgstr "Il n'y a pas de contrôles disponibles"
+
+msgid "checked"
+msgstr "coché"
+
+msgid "not checked"
+msgstr "non coché"
+
+msgid "unavailable"
+msgstr "non disponible"
+
+#, python-format
+msgid "%s of %s"
+msgstr "%s de %s"
+
+msgid " playing"
+msgstr " lecture en cours"
+
+msgid "Repeat mode"
+msgstr "Mode répétition"
+
+msgid "Shuffle mode"
+msgstr "Mode aléatoire"
+
+#, python-format
+msgid "%d items in playlist"
+msgstr "%d éléments dans la playlist"
+
+msgid "Playlist is not visible"
+msgstr "La playlist n'est pas visible"
+
+msgid "This item is outside the window"
+msgstr "Cet élément est hors de la fenêtre"
+
+msgid "Checked"
+msgstr "Coché"
+
+msgid "edit"
+msgstr "édition"
+
+msgid "button"
+msgstr "bouton"
+
+msgid "tab control"
+msgstr "onglet"
+
+#. Add-on summary, usually the user visible name of the addon.
+#. Translators: Summary for this add-on to be shown on installation and add-on information.
+msgid "VLC Media Player"
+msgstr "Lecteur multimédia VLC"
+
+#. Add-on description
+#. Translators: Long description to be shown for this add-on on add-on information from add-ons manager
+msgid ""
+"It provides some accessibility features for VLC Media Player, as improve "
+"navigation  or read status bar"
+msgstr ""
+"Il fournit quelques fonctionnalités d'accessibilité pour le Lecteur "
+"multimédia VLC, telles que l'amélioration de la navigation ou la lecture de "
+"la barre d'État"

@@ -1,0 +1,103 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: vlc 1.0\n"
+"Report-Msgid-Bugs-To: nvda-translations@freelists.org\n"
+"POT-Creation-Date: 2015-10-30 22:00+1000\n"
+"PO-Revision-Date: 2016-02-26 02:52-0800\n"
+"Last-Translator: Jožef Gregorc <jozko.gregorc[@]guest.arnes.si>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: sl\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.5.5\n"
+
+#, python-format
+msgid "%d hours "
+msgstr "%d ure "
+
+#, python-format
+msgid "%d hour "
+msgstr "%d ura "
+
+#, python-format
+msgid "%s%d minutes "
+msgstr "%s%d minute "
+
+#, python-format
+msgid "%s%d minute "
+msgstr "%s%d minuta "
+
+#, python-format
+msgid "%s %d seconds"
+msgstr "%s %d sekunde"
+
+#, python-format
+msgid "%s %d second"
+msgstr "%s %d sekunda"
+
+msgid "There are no controls available"
+msgstr "Tu ni na voljo nobenih kontrolnikov"
+
+msgid "checked"
+msgstr "izbrano"
+
+msgid "not checked"
+msgstr "ni izbrano"
+
+msgid "unavailable"
+msgstr "ni na voljo"
+
+#, python-format
+msgid "%s of %s"
+msgstr "%s od %s"
+
+msgid " playing"
+msgstr " predvajanje"
+
+msgid "Repeat mode"
+msgstr "Ponovitveno delovanje"
+
+msgid "Shuffle mode"
+msgstr "Naključno delovanje"
+
+#, python-format
+msgid "%d items in playlist"
+msgstr "%d elementov na seznamu predvajanja"
+
+msgid "Playlist is not visible"
+msgstr "Seznam predvajanja ni viden"
+
+msgid "This item is outside the window"
+msgstr "Ta element je zunaj okna"
+
+msgid "Checked"
+msgstr "Izbrano"
+
+msgid "edit"
+msgstr "uredi"
+
+msgid "button"
+msgstr "gumb"
+
+msgid "tab control"
+msgstr "nadzornik zavihka"
+
+#. Add-on summary, usually the user visible name of the addon.
+#. Translators: Summary for this add-on to be shown on installation and add-on information.
+msgid "VLC Media Player"
+msgstr "Predvajalnik VLC"
+
+#. Add-on description
+#. Translators: Long description to be shown for this add-on on add-on information from add-ons manager
+msgid ""
+"It provides some accessibility features for VLC Media Player, as improve "
+"navigation  or read status bar"
+msgstr ""
+"To dodaja nekaj zmožnosti glede dostopnosti za predvajalnik VLC, kot sso "
+"izboljšave krmarjenja in branja vrstice stanja"

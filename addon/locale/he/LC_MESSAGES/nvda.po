@@ -1,0 +1,128 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: vlc 1.2\n"
+"Report-Msgid-Bugs-To: nvda-translations@freelists.org\n"
+"POT-Creation-Date: 2016-04-22 22:00+1000\n"
+"PO-Revision-Date: 2017-11-15 13:33+0200\n"
+"Last-Translator: shmuel_naaman@yahoo.com\n"
+"Language-Team: Shmuel Retbi , Shmuel NaamanLanguage: he\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"X-Generator: Poedit 2.0.4\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: he\n"
+
+#: addon/appModules/vlc.py:63
+#, python-format
+msgid "%d hours "
+msgstr "%d שעות"
+
+#: addon/appModules/vlc.py:65
+#, python-format
+msgid "%d hour "
+msgstr "שעה %d"
+
+#: addon/appModules/vlc.py:76
+#, python-format
+msgid "%s%d minutes "
+msgstr "%s%d דקות"
+
+#: addon/appModules/vlc.py:78
+#, python-format
+msgid "%s%d minute "
+msgstr "דקה %s%d"
+
+#: addon/appModules/vlc.py:80
+#, python-format
+msgid "%s %d seconds"
+msgstr "%s%d שניות"
+
+#: addon/appModules/vlc.py:82
+#, python-format
+msgid "%s %d second"
+msgstr "שניה %s%d"
+
+#: addon/appModules/vlc.py:130
+msgid "There are no controls available"
+msgstr "אין פקדים זמינים"
+
+#: addon/appModules/vlc.py:139 addon/appModules/vlc.py:237
+msgid "checked"
+msgstr "פעיל"
+
+#: addon/appModules/vlc.py:141 addon/appModules/vlc.py:239
+#: addon/appModules/vlc.py:277 addon/appModules/vlc.py:286
+msgid "not checked"
+msgstr "לא פעיל"
+
+#: addon/appModules/vlc.py:143
+msgid "unavailable"
+msgstr "לא זמין"
+
+#: addon/appModules/vlc.py:174
+#, python-format
+msgid "%s of %s"
+msgstr "%s מתוך %s"
+
+#: addon/appModules/vlc.py:176
+msgid " playing"
+msgstr "בנגינה"
+
+#: addon/appModules/vlc.py:178 addon/appModules/vlc.py:271
+msgid "Repeat mode"
+msgstr "מצב חזרה"
+
+#: addon/appModules/vlc.py:180 addon/appModules/vlc.py:280
+msgid "Shuffle mode"
+msgstr "מצב אקראי"
+
+#: addon/appModules/vlc.py:206
+#, python-format
+msgid "%d items in playlist"
+msgstr "%d ברשימת הנגינה"
+
+#: addon/appModules/vlc.py:224 addon/appModules/vlc.py:228
+msgid "Playlist is not visible"
+msgstr "רשימת הנגינה אינה מוצגת"
+
+#: addon/appModules/vlc.py:247 addon/appModules/vlc.py:266
+msgid "This item is outside the window"
+msgstr "פריט זה נמצא מחוץ לחלון הפעיל"
+
+#: addon/appModules/vlc.py:275 addon/appModules/vlc.py:284
+msgid "Checked"
+msgstr "פעיל"
+
+#: addon/appModules/vlc.py:323
+msgid "edit"
+msgstr "עריכה"
+
+#: addon/appModules/vlc.py:324
+msgid "button"
+msgstr "כפתור"
+
+#: addon/appModules/vlc.py:325
+msgid "tab control"
+msgstr "לשונית"
+
+#. Add-on summary, usually the user visible name of the addon.
+#. Translators: Summary for this add-on to be shown on installation and add-on information.
+#: buildVars.py:17
+msgid "VLC Media Player"
+msgstr "VLC Media Player"
+
+#. Add-on description
+#. Translators: Long description to be shown for this add-on on add-on information from add-ons manager
+#: buildVars.py:20
+msgid ""
+"It provides some accessibility features for VLC Media Player, as improve "
+"navigation  or read status bar"
+msgstr "מנגיש במידה מסויימת את נגן VLC  ומשפר את הניווט ואת הצגת שורת המצב"
