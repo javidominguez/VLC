@@ -95,7 +95,9 @@ class AppModule(appModuleHandler.AppModule):
 		nextHandler()
 
 	def event_gainFocus(self, obj, nextHandler):
-		if (obj.role == controlTypes.ROLE_MENUITEM and obj.parent.parent.windowClassName == u'#32768') or (obj.role == controlTypes.ROLE_POPUPMENU and obj.parent.windowClassName == u'#32768'):
+		if obj.role == controlTypes.ROLE_MENUBAR and hasattr(obj.parent, "playbackControls"):
+			api.setFocusObject(obj.parent)
+		elif (obj.role == controlTypes.ROLE_MENUITEM and obj.parent.parent.windowClassName == u'#32768') or (obj.role == controlTypes.ROLE_POPUPMENU and obj.parent.windowClassName == u'#32768'):
 			api.setFocusObject(obj)
 		if controlTypes.STATE_INVISIBLE in obj.states:
 			obj = api.getForegroundObject()
