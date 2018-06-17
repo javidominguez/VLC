@@ -82,7 +82,7 @@ class AppModule(appModuleHandler.AppModule):
 					pass
 				else:
 					if container and container.name and container.role == controlTypes.ROLE_PANE:
-						if obj.previous.role == controlTypes.ROLE_STATICTEXT:
+						if obj.previous and obj.previous.role == controlTypes.ROLE_STATICTEXT:
 							obj.name = obj.previous.name 
 						clsList.insert(0, VLC_mediaInfo)
 		if obj.role == controlTypes.ROLE_DIALOG and (obj.windowClassName == u'Qt5QWindowToolSaveBits' or obj.windowClassName == u'Qt5QWindowIcon'):
@@ -170,7 +170,7 @@ class VLC_mainWindow(IAccessible):
 		# Add mute button
 		if controlTypes.STATE_INVISIBLE not in self.getChild(2).getChild(3).getChild(3).firstChild.states:
 			controls.append(self.getChild(2).getChild(3).getChild(3).firstChild)
-			return controls
+		return controls
 
 	def _get_volumeDisplay(self):
 		return self.getChild(2).getChild(3).getChild(3).getChild(1)
