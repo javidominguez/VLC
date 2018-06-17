@@ -95,6 +95,8 @@ class AppModule(appModuleHandler.AppModule):
 		nextHandler()
 
 	def event_gainFocus(self, obj, nextHandler):
+		if (obj.role == controlTypes.ROLE_MENUITEM and obj.parent.parent.windowClassName == u'#32768') or (obj.role == controlTypes.ROLE_POPUPMENU and obj.parent.windowClassName == u'#32768'):
+			api.setFocusObject(obj)
 		if controlTypes.STATE_INVISIBLE in obj.states:
 			obj = api.getForegroundObject()
 			obj.setFocus()
@@ -118,8 +120,29 @@ class AppModule(appModuleHandler.AppModule):
 	#TRANSLATORS: message shown in Input gestures dialog for this script
 	script_toggleVerbosity.__doc__ = _("Toggle verbosity: if enabled, it will announce the elapsed time and volume")
 
+	def script_leaveMenu(self, gesture):
+		gesture.send()
+		fg = api.getForegroundObject()
+		focused = api.getFocusObject()
+		# A menuitem from VLC_MainWindow that should let go the focus but keeps it
+		if hasattr(fg, "playbackControls")\
+		and focused.role == controlTypes.ROLE_MENUITEM\
+		and controlTypes.STATE_FOCUSED not in focused.states:
+			# If it is an item in a submenu
+			if focused.parent.role == controlTypes.ROLE_POPUPMENU\
+			and focused.parent.parent.role == controlTypes.ROLE_MENUITEM\
+			and focused.simpleParent.simpleParent.role != controlTypes.ROLE_MENUBAR:
+				# Return to parent menu
+				api.setFocusObject(focused.simpleParent)
+				focused.simpleParent.reportFocus()
+			else: # Item was in main menu
+				# Return to VLC_MainWindow
+				api.setFocusObject(fg)
+				fg.moveToItem(self.tpItemIndex)
+
 	__gestures = {
-	"kb:NVDA+F5": "controlPaneToForeground"
+	"kb:NVDA+F5": "controlPaneToForeground",
+	"kb:escape": "leaveMenu"
 	}
 
 class VLC_Dialog(Dialog):
