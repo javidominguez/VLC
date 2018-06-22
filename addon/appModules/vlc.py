@@ -13,6 +13,7 @@ import controlTypes
 import api
 import winUser
 import ui
+import globalVars
 from speech import speakObject
 import tones
 from time import sleep
@@ -41,6 +42,10 @@ class AppModule(appModuleHandler.AppModule):
 	def __init__(self, *args, **kwargs):
 		super(AppModule, self).__init__(*args, **kwargs)
 		self.tpItemIndex = 100
+		self.anchoredPlaylist = False
+		self.embeddedWindows = {
+		u'StandardPLPanelClassWindow': _("Anchored playlist")
+		}
 		if hasattr(settingsDialogs, 'SettingsPanel'):
 			NVDASettingsDialog.categoryClasses.append(VLCPanel)
 		else:
@@ -67,26 +72,45 @@ class AppModule(appModuleHandler.AppModule):
 		if obj.windowClassName == u'Qt5QWindowIcon':
 			if obj.role == controlTypes.ROLE_BORDER or obj.role == controlTypes.ROLE_PANE:
 				if obj.childCount == 3:
-					obj.role = controlTypes.ROLE_STATUSBAR
+					if obj.lastChild.role == controlTypes.ROLE_STATICTEXT:
+						obj.role = controlTypes.ROLE_STATUSBAR
+						clsList.insert(0, VLC_StatusBar)
+					elif obj.lastChild and obj.lastChild.firstChild and obj.lastChild.firstChild.firstChild\
+					and obj.lastChild.firstChild.firstChild.role == controlTypes.ROLE_MENUBUTTON:
+						obj.role = controlTypes.ROLE_PANEL
+						#TRANSLATORS: Title of the panel that contains the playlist when it is inside main window
+						obj.name = _("Anchored playlist")
+						obj.isPresentableFocusAncestor = False
+						clsList.insert(0, VLC_AnchoredPlaylist)
 				else:
-					obj.role = controlTypes.ROLE_PANE
-				clsList.insert(0, VLC_pane)
-			elif obj.role == controlTypes.ROLE_SPINBUTTON:
-				clsList.insert(0, VLC_spinButton)
-			elif obj.role == controlTypes.ROLE_WINDOW and obj.firstChild and obj.firstChild.role == controlTypes.ROLE_MENUBAR:
-				clsList.insert(0, VLC_mainWindow)
+					obj.role = controlTypes.ROLE_LAYEREDPANE
+					clsList.insert(0, VLC_pane)
+			elif obj.role == controlTypes.ROLE_WINDOW:
+				if obj.firstChild and obj.firstChild.role == controlTypes.ROLE_MENUBAR:
+					clsList.insert(0, VLC_mainWindow)
+				elif obj.windowStyle == 1442840576:
+					if obj.windowText in self.embeddedWindows:
+						obj.name = self.embeddedWindows[obj.windowText]
+						obj.isPresentableFocusAncestor = True
+					else:
+						obj.name = obj.windowText
+					clsList.insert(0, VLC_EmbeddedWindow)
 			elif obj.windowStyle == -1764884480 and obj.isFocusable:
 				try:
 					container = obj.container.container.container.container
 				except AttributeError:
 					pass
 				else:
-					if container and container.name and container.role == controlTypes.ROLE_PANE:
+					if container and container.name and container.role == controlTypes.ROLE_LAYEREDPANE:
 						if obj.previous and obj.previous.role == controlTypes.ROLE_STATICTEXT:
 							obj.name = obj.previous.name 
 						clsList.insert(0, VLC_mediaInfo)
+		if obj.role == controlTypes.ROLE_SPINBUTTON:
+			clsList.insert(0, VLC_spinButton)
 		if obj.role == controlTypes.ROLE_DIALOG and (obj.windowClassName == u'Qt5QWindowToolSaveBits' or obj.windowClassName == u'Qt5QWindowIcon'):
 			clsList.insert(0, VLC_Dialog)
+		if obj.role == controlTypes.ROLE_LISTITEM and obj.windowText == u'StandardPLPanelClassWindow':
+			clsList.insert(0, VLC_PlaylistItem)
 
 	def event_foreground(self, obj, nextHandler):
 		appWindow = api.getForegroundObject().parent
@@ -108,6 +132,7 @@ class AppModule(appModuleHandler.AppModule):
 		obj = api.getForegroundObject()
 		if hasattr(obj, "playbackControls"):
 			api.setFocusObject(obj)
+			obj.moveToItem(self.tpItemIndex)
 			tones.beep(1200, 30)
 		else:
 			tones.beep(200,30)
@@ -153,6 +178,11 @@ class VLC_Dialog(Dialog):
 		self.reportFocus()
 		api.setForegroundObject(self)
 
+class VLC_EmbeddedWindow(IAccessible):
+	def event_focusEntered(self):
+		if self.isPresentableFocusAncestor:
+			self.reportFocus()
+
 class VLC_application(qt.Application):
 	pass
 
@@ -179,6 +209,21 @@ class VLC_mainWindow(IAccessible):
 		fg = api.getForegroundObject()
 		return fg.getChild(2).getChild(3).getChild(5)
 
+	def _get_anchoredPlaylist(self):
+		try:
+			# Search box in anchored playlist
+			searchBox = self.getChild(2).getChild(1).getChild(2).getChild(2)
+			return searchBox if searchBox.role == controlTypes.ROLE_EDITABLETEXT and controlTypes.STATE_INVISIBLE not in searchBox.states else None
+		except:
+			pass
+		try:
+			# SplitButton in anchored playlist
+			splitButton = self.getChild(2).getChild(1).getChild(1).getChild(3)
+			return splitButton if splitButton.role == controlTypes.ROLE_SPLITBUTTON and controlTypes.STATE_INVISIBLE not in splitButton.states else None
+		except:
+			pass
+		return None
+
 	def event_foreground(self):
 		api.setFocusObject(self)
 
@@ -186,7 +231,7 @@ class VLC_mainWindow(IAccessible):
 		api.setForegroundObject(self)
 		self.description = ""
 		if not self.focusDialog():
-			self.moveToItem(self.appModule.tpItemIndex)
+				self.moveToItem(self.appModule.tpItemIndex)
 
 	def composeTime(self, t="00:00"):
 		"Convert time from hh:mm:ss to h hours m minutes s seconds"
@@ -300,7 +345,7 @@ class VLC_mainWindow(IAccessible):
 			except:
 				pass
 	#TRANSLATORS: message shown in Input gestures dialog for this script
-	script_readStatusBar.__doc__ =  _("Reads the status bar information")
+	script_readStatusBar.__doc__ =  _("Reads the information of the current playback.")
 
 	def script_doAction(self, gesture):
 		obj = api.getNavigatorObject()
@@ -336,9 +381,12 @@ class VLC_mainWindow(IAccessible):
 
 	def getDialog(self):
 		fg = api.getForegroundObject()
-		obj = fg.simpleNext
-		if obj:
-			return obj if obj.role == controlTypes.ROLE_DIALOG and controlTypes.STATE_INVISIBLE not in obj.states else None
+		if hasattr(fg, "playbackControls"):
+			obj = fg.simpleNext
+			while obj:
+				if controlTypes.STATE_INVISIBLE not in obj.states:
+					return obj
+				obj = obj.simpleNext
 		return None
 
 	def focusDialog(self):
@@ -371,6 +419,15 @@ class VLC_mainWindow(IAccessible):
 		gesture.send()
 		if self.volumeDisplay.value and config.conf['VLC']['reportTimeWhenTrackSlips']: ui.message(_("Volume %s") % self.volumeDisplay.value)
 
+	def script_pushToFront(self, gesture):
+		if not self.focusDialog():
+			if self.anchoredPlaylist:
+				api.setNavigatorObject(self.anchoredPlaylist)
+				api.moveMouseToNVDAObject(self.anchoredPlaylist)
+				self.mouseClick()
+	#TRANSLATORS: message shown in Input gestures dialog for this script
+	script_pushToFront.__doc__ = _("Brings panels or dialogs that are displayed on the screen, but NVDA is unable to focus automatically to the fore.")
+
 	__gestures = {
 		"kb:I": "readStatusBar",
 		"kb:L": "repeat",
@@ -391,13 +448,41 @@ class VLC_mainWindow(IAccessible):
 		"kb:downArrow": "sayVolume",
 		"kb:Control+upArrow": "sayVolume",
 		"kb:Control+downArrow": "sayVolume",
-		"kb:enter": "doAction"
+		"kb:enter": "doAction",
+		"kb:control+tab": "pushToFront"
 		}
 
-class VLC_pane(IAccessible):
-	pass
+class VLC_pane(qt.LayeredPane):
+
+	def event_gainFocus(self):
+		if self.simpleParent.role == controlTypes.ROLE_PANEL:
+			# This panel often retains the focus when it receive it and it is necessary to bring it to the playback window.
+			fg = api.getForegroundObject()
+			if hasattr(fg, "playbackControls"):
+				api.setFocusObject(fg)
+				if self.appModule.anchoredPlaylist:
+					self.appModule.anchoredPlaylist = False
+					fg.moveToItem(self.appModule.tpItemIndex)
+		elif self.name:
+			ui.message(self.name)
+			labels = [obj.name for obj in\
+			filter(lambda o: o.name and o.role == controlTypes.ROLE_STATICTEXT and controlTypes.STATE_INVISIBLE not in o.states and o.next.role not in [
+			controlTypes.ROLE_EDITABLETEXT,
+			controlTypes.ROLE_COMBOBOX,
+			controlTypes.ROLE_SPINBUTTON],
+			self.recursiveDescendants)]
+			# It seems to work well but in panels with many objects recursiveDescendants could give problems of slowness
+			# If that happens it would be necessary to change this to a loop while with timeout
+			ui.message("\n".join(labels))
+
+	def event_focusEntered(self):
+		if self.simpleParent.role == controlTypes.ROLE_PANEL:
+			# Announces the anchored playlist
+			speakObject(self.simpleParent)
+			self.appModule.anchoredPlaylist = True
 
 class VLC_spinButton(IAccessible):
+	# This class is obsolete. In VLC 3 no longer works.
 
 	def event_gainFocus(self):
 		ui.message(self.value)
@@ -426,6 +511,40 @@ class VLC_mediaInfo(IAccessible):
 	"kb:Shift+Tab": "previousControl"
 	}
 
+class VLC_AnchoredPlaylist(IAccessible):
+	pass
+
+class VLC_PlaylistItem(IAccessible):
+
+	def script_nextItem(self, gesture):
+		self.selectItem(self.simpleNext)
+
+	def script_previousItem(self, gesture):
+		self.selectItem(self.simplePrevious)
+
+	def selectItem(self, item):
+		if item and item.role == controlTypes.ROLE_LISTITEM:
+			item.scrollIntoView()
+			api.setNavigatorObject(item)
+			api.moveMouseToNVDAObject(item)
+			x, y = winUser.getCursorPos()
+			if api.getDesktopObject().objectFromPoint(x,y) == item:
+				winUser.mouse_event(winUser.MOUSEEVENTF_LEFTDOWN,0,0,None,None)
+				winUser.mouse_event(winUser.MOUSEEVENTF_LEFTUP,0,0,None,None)
+				item.setFocus()
+				api.setFocusObject(item)
+				if item.name: ui.message(item.name)
+			else:
+				tones.beep(200,20)
+
+	__gestures = {
+	"kb:downArrow": "nextItem",
+	"kb:upArrow": "previousItem"
+	}
+
+class VLC_StatusBar(IAccessible):
+	pass
+
 class VLCSettings(settingsDialogs.SettingsDialog):
 	#TRANSLATORS: Settings dialog title
 	title=_("VLC appModule settings")
@@ -453,3 +572,4 @@ class VLCPanel(SettingsPanel):
 
 	def onSave(self):
 		config.conf['VLC']['reportTimeWhenTrackSlips'] = self.reportTimeEnabled.GetValue()
+
