@@ -6,19 +6,22 @@
 Diese Erweiterung stellt Funktionen zur Verbesserung der Zugänglichkeit für
 VLC media player zur Verfügung.
 
-1. Allows navigating through the playback controls using Tab and
-   Shift+Tab. To activate a selected control press enter.
-2. Reads status bar information (press I). The gesture can be set up in NVDA
-   preferences.
-3. Says elapsed time when moving back and forward using VLC keystrokes:
-   Control plus left/right arrow to skip 1 minute and Shift plus left/right
-   arrows to skip 5 seconds. You can set the verbosity in the NVDA
-   preferences. You can also assign a keyboard shortcut to toggle it.
-4. Announces state when change random mode (key R) and repeat mode (key L).
+1. Ermöglicht das Navigieren durch die Wiedergabesteuerelemente mit Tab und
+   Umschalt + Tab. Um ein ausgewähltes Steuerelement zu aktivieren, drücken
+   Sie die Eingabetaste.
+2. Liest Informationen der Statusleiste (drücken Sie i). Die Geste kann in
+   NVDA-Einstellungen eingerichtet werden.
+3. Gibt die abgelaufene Zeit an, wenn Sie mit VLC-Tastenanschlägen vor- und
+   zurückgehen: Strg + Pfeil links / rechts, um 1 Minute zu überspringen und
+   Umschalt + Pfeil links / rechts, um 5 Sekunden zu überspringen. Sie
+   können die Ausführlichkeit in den NVDA-Einstellungen festlegen und eine
+   Tastenkombination zum Umschalten zuweisen.
+4. Gibt den Status beim Ändern des Zufallsmodus (Taste R) und des
+   Wiederholungsmodus (Taste L) an.
 
-* Important note: This addon is optimized for versions of VLC 3.0 and
-  higher; it will not work correctly with earlier versions. To use VLC 2.x
-  [download the old version of the addon.][1]
+* Wichtiger Hinweis: Dieses Addon ist für VLC 3.0 und höher optimiert; Es
+  wird nicht korrekt mit früheren Versionen funktionieren. Um VLC 2.x zu
+  verwenden, [laden Sie die alte Version des Addons herunter.][1]
 
 
 [[!tag dev stable]]

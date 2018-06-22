@@ -6,19 +6,23 @@
 Ce module complémentaire fournit des fonctionnalités d'accessibilité pour
 VLC Media Player.
 
-1. Allows navigating through the playback controls using Tab and
-   Shift+Tab. To activate a selected control press enter.
-2. Reads status bar information (press I). The gesture can be set up in NVDA
-   preferences.
-3. Says elapsed time when moving back and forward using VLC keystrokes:
-   Control plus left/right arrow to skip 1 minute and Shift plus left/right
-   arrows to skip 5 seconds. You can set the verbosity in the NVDA
-   preferences. You can also assign a keyboard shortcut to toggle it.
-4. Announces state when change random mode (key R) and repeat mode (key L).
+1. Permet de naviguer à travers les contrôles de lecture à l'aide de Tab et
+   Maj+Tab. Pour activer un contrôle sélectionné, appuyez sur Entrée.
+2. Lire les informations de la barre d'état (appuyez sur I). Le geste peut
+   être configuré dans les préférences NVDA.
+3. Annonce le temps écoulé lors du déplacement en arrière et en avant à
+   l'aide des séquences de touches de VLC : Contrôle plus flèches
+   gauche/droite pour sauter 1 minute et Maj plus flèches gauche/droite pour
+   sauter 5 secondes. Vous pouvez définir la verbosité dans les préférences
+   NVDA. Vous pouvez également attribuer un raccourci clavier pour le
+   basculer.
+4. Annonce l'état lors du changement en mode aléatoire (touche R) et en mode
+   répétition (touche L).
 
-* Important note: This addon is optimized for versions of VLC 3.0 and
-  higher; it will not work correctly with earlier versions. To use VLC 2.x
-  [download the old version of the addon.][1]
+* Note importante : Ce module complémentaire est optimisé pour les versions
+  de VLC 3.0 et supérieures; cela ne fonctionnera pas correctement avec les
+  versions antérieures. Pour utiliser VLC 2.x [téléchargez l'ancienne
+  version du module complémentaire.][1]
 
 
 [[!tag dev stable]]
