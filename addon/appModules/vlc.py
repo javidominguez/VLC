@@ -16,7 +16,8 @@ import ui
 import globalVars
 from speech import speakObject
 import tones
-from time import sleep
+from time import sleep, time
+import re
 import gui
 import wx
 import config
@@ -44,7 +45,8 @@ class AppModule(appModuleHandler.AppModule):
 		self.tpItemIndex = 100
 		self.anchoredPlaylist = False
 		self.embeddedWindows = {
-		u'StandardPLPanelClassWindow': _("Anchored playlist")
+		#TRANSLATORS: Window or panel that contains the playlist when it is inside main window
+		u'PlaylistWidgetClassWindow': _("Playlist")
 		}
 		if hasattr(settingsDialogs, 'SettingsPanel'):
 			NVDASettingsDialog.categoryClasses.append(VLCPanel)
@@ -79,11 +81,15 @@ class AppModule(appModuleHandler.AppModule):
 					and obj.lastChild.firstChild.firstChild.role == controlTypes.ROLE_MENUBUTTON:
 						obj.role = controlTypes.ROLE_PANEL
 						#TRANSLATORS: Title of the panel that contains the playlist when it is inside main window
-						obj.name = _("Anchored playlist")
+						obj.name = _("Playlist")
 						obj.isPresentableFocusAncestor = False
 						clsList.insert(0, VLC_AnchoredPlaylist)
 				else:
 					obj.role = controlTypes.ROLE_LAYEREDPANE
+					if obj.windowText in self.embeddedWindows:
+						obj.name = self.embeddedWindows[obj.windowText]
+					elif obj.windowText != api.getForegroundObject().name:
+						obj.description = obj.windowText
 					clsList.insert(0, VLC_pane)
 			elif obj.role == controlTypes.ROLE_WINDOW:
 				if obj.firstChild and obj.firstChild.role == controlTypes.ROLE_MENUBAR:
@@ -93,7 +99,7 @@ class AppModule(appModuleHandler.AppModule):
 						obj.name = self.embeddedWindows[obj.windowText]
 						obj.isPresentableFocusAncestor = True
 					else:
-						obj.name = obj.windowText
+						obj.description = obj.windowText
 					clsList.insert(0, VLC_EmbeddedWindow)
 			elif obj.windowStyle == -1764884480 and obj.isFocusable:
 				try:
@@ -126,6 +132,15 @@ class AppModule(appModuleHandler.AppModule):
 		if controlTypes.STATE_INVISIBLE in obj.states:
 			obj = api.getForegroundObject()
 			obj.setFocus()
+		elif "<html>" in obj.description:
+			# Removes the HTML tags that appear in the description of some objects
+			while re.search("<[^(>.*<)]+>([^<]*</style>)?", obj.description): obj.description = obj.description.replace(re.search("<[^(>.*<)]+>([^<]*</style>)?", obj.description).group(), "")
+		nextHandler()
+
+	def event_becomeNavigatorObject(self, obj, nextHandler):
+		if "<html>" in obj.description:
+			# Removes the HTML tags that appear in the description of some objects
+			while re.search("<[^(>.*<)]+>([^<]*</style>)?", obj.description): obj.description = obj.description.replace(re.search("<[^(>.*<)]+>([^<]*</style>)?", obj.description).group(), "")
 		nextHandler()
 
 	def script_controlPaneToForeground(self, gesture):
@@ -192,11 +207,12 @@ class VLC_mainWindow(IAccessible):
 	scriptCategory = _("VLC")
 
 	def _get_playbackControls(self):
-		controls =\
-		self.getChild(2).getChild(3).children[3:]+\
+		controls = filter(lambda c: c.role not in [
+		controlTypes.ROLE_GRIP, controlTypes.ROLE_BORDER, controlTypes.ROLE_LAYEREDPANE],
+		self.getChild(2).getChild(3).children+\
 		self.getChild(2).getChild(3).firstChild.children+\
 		self.getChild(2).getChild(3).getChild(1).children+\
-		list(self.getChild(2).getChild(3).getChild(2).recursiveDescendants)
+		list(self.getChild(2).getChild(3).getChild(2).recursiveDescendants))
 		# Add mute button
 		if controlTypes.STATE_INVISIBLE not in self.getChild(2).getChild(3).getChild(3).firstChild.states:
 			controls.append(self.getChild(2).getChild(3).getChild(3).firstChild)
@@ -293,14 +309,14 @@ class VLC_mainWindow(IAccessible):
 		ui.message(self.composeTime(elapsedTime))
 
 	def moveToItem(self, index):
-		toolPaneItems = filter(lambda item: controlTypes.STATE_INVISIBLE not in item.states and controlTypes.STATE_UNAVAILABLE not in item.states and item.role != controlTypes.ROLE_GRIP  and item.role != controlTypes.ROLE_BORDER, self.playbackControls)
+		toolPaneItems = filter(lambda item: controlTypes.STATE_INVISIBLE not in item.states and controlTypes.STATE_UNAVAILABLE not in item.states, self.playbackControls)
 		if len(toolPaneItems) == 0:
 			#TRANSLATORS: Message when there are no playback controls visible on screen, or the addon can't find them.
 			ui.message(_("There are no controls available"))
 			return()
 		if index >= len(toolPaneItems):
-			index = 1
-		if index < 1:
+			index = 0
+		if index < 0:
 			index = len(toolPaneItems)-1
 		speakObject(toolPaneItems[index])
 		api.setNavigatorObject(toolPaneItems[index])
@@ -465,15 +481,19 @@ class VLC_pane(qt.LayeredPane):
 					fg.moveToItem(self.appModule.tpItemIndex)
 		elif self.name:
 			ui.message(self.name)
-			labels = [obj.name for obj in\
-			filter(lambda o: o.name and o.role == controlTypes.ROLE_STATICTEXT and controlTypes.STATE_INVISIBLE not in o.states and o.next.role not in [
-			controlTypes.ROLE_EDITABLETEXT,
-			controlTypes.ROLE_COMBOBOX,
-			controlTypes.ROLE_SPINBUTTON],
-			self.recursiveDescendants)]
-			# It seems to work well but in panels with many objects recursiveDescendants could give problems of slowness
-			# If that happens it would be necessary to change this to a loop while with timeout
-			ui.message("\n".join(labels))
+			rGen = self.recursiveDescendants
+			timeout = time()+0.10
+			while True:
+				if time() > timeout: break
+				try:
+					obj = rGen.next()
+				except StopIteration:
+					break
+				if obj.name and obj.role == controlTypes.ROLE_STATICTEXT and controlTypes.STATE_INVISIBLE not in obj.states and obj.next.role not in [
+				controlTypes.ROLE_EDITABLETEXT,
+				controlTypes.ROLE_COMBOBOX,
+				controlTypes.ROLE_SPINBUTTON]:
+					ui.message(obj.name)
 
 	def event_focusEntered(self):
 		if self.simpleParent.role == controlTypes.ROLE_PANEL:
@@ -482,7 +502,6 @@ class VLC_pane(qt.LayeredPane):
 			self.appModule.anchoredPlaylist = True
 
 class VLC_spinButton(IAccessible):
-	# This class is obsolete. In VLC 3 no longer works.
 
 	def event_gainFocus(self):
 		ui.message(self.value)
