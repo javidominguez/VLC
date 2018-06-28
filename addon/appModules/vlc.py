@@ -8,7 +8,7 @@
 import appModuleHandler
 import addonHandler
 from NVDAObjects.IAccessible import IAccessible, qt
-from NVDAObjects.behaviors import Dialog
+from NVDAObjects.behaviors import 	Dialog
 import controlTypes
 import api
 import winUser
@@ -17,6 +17,7 @@ import globalVars
 from speech import speakObject
 import tones
 from time import sleep, time
+import textInfos
 import re
 import gui
 import wx
@@ -27,6 +28,11 @@ try:
 	from gui.settingsDialogs import SettingsPanel
 except:
 	SettingsPanel = object
+try:
+	from qtEditableText import QTEditableText
+except:
+	from NVDAObjects.behaviors import EditableTextWithAutoSelectDetection as QTEditableText
+from string import printable
 
 addonHandler.initTranslation()
 
@@ -117,6 +123,12 @@ class AppModule(appModuleHandler.AppModule):
 			clsList.insert(0, VLC_Dialog)
 		if obj.role == controlTypes.ROLE_LISTITEM and obj.windowText == u'StandardPLPanelClassWindow':
 			clsList.insert(0, VLC_PlaylistItem)
+		if obj.role == controlTypes.ROLE_EDITABLETEXT and obj.windowClassName == u'Qt5QWindowIcon':
+			# obj.typeBuffer = ""
+			# obj.fakeCaret = len(obj.value)-1 if obj.value else 0
+			clsList.insert(0, VLC_EditableText)
+			
+
 
 	def event_foreground(self, obj, nextHandler):
 		appWindow = api.getForegroundObject().parent
@@ -563,6 +575,16 @@ class VLC_PlaylistItem(IAccessible):
 
 class VLC_StatusBar(IAccessible):
 	pass
+
+class VLC_EditableText(QTEditableText):
+
+	def event_gainFocus(self):
+		self.reportFocus()
+		self.typeBuffer = ""
+		self.fakeCaret = len(self.value)-1 if self.value else 0
+		self.startSelection = -1
+		self.alphanumeric = printable[:62]+u"áéíóúñ"
+		self.sign = printable[62:94]
 
 class VLCSettings(settingsDialogs.SettingsDialog):
 	#TRANSLATORS: Settings dialog title
