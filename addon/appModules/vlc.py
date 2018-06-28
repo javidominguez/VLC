@@ -88,7 +88,7 @@ class AppModule(appModuleHandler.AppModule):
 					obj.role = controlTypes.ROLE_LAYEREDPANE
 					if obj.windowText in self.embeddedWindows:
 						obj.name = self.embeddedWindows[obj.windowText]
-					elif obj.windowText != api.getForegroundObject().name:
+					elif api.getForegroundObject().name and obj.windowText != api.getForegroundObject().name:
 						obj.description = obj.windowText
 					clsList.insert(0, VLC_pane)
 			elif obj.role == controlTypes.ROLE_WINDOW:
@@ -132,13 +132,13 @@ class AppModule(appModuleHandler.AppModule):
 		if controlTypes.STATE_INVISIBLE in obj.states:
 			obj = api.getForegroundObject()
 			obj.setFocus()
-		elif "<html>" in obj.description:
+		elif obj.description and "<html>" in obj.description:
 			# Removes the HTML tags that appear in the description of some objects
 			while re.search("<[^(>.*<)]+>([^<]*</style>)?", obj.description): obj.description = obj.description.replace(re.search("<[^(>.*<)]+>([^<]*</style>)?", obj.description).group(), "")
 		nextHandler()
 
-	def event_becomeNavigatorObject(self, obj, nextHandler):
-		if "<html>" in obj.description:
+	def event_becomeNavigatorObject(self, obj, nextHandler, *args, **kwargs):
+		if obj.description and "<html>" in obj.description:
 			# Removes the HTML tags that appear in the description of some objects
 			while re.search("<[^(>.*<)]+>([^<]*</style>)?", obj.description): obj.description = obj.description.replace(re.search("<[^(>.*<)]+>([^<]*</style>)?", obj.description).group(), "")
 		nextHandler()
