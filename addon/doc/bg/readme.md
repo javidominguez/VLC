@@ -2,6 +2,7 @@
 
 * Автор: Javi Dominguez
 * Изтегляне на [стабилна версия][2]
+* Изтегляне на [работна версия][3]
 
 Тази добавка предоставя някои подобрения за достъпността във VLC Media
 Player.
@@ -18,13 +19,21 @@ Player.
 4. Съобщава промяната в режима на възпроизвеждане при задействане на
    командите за разбъркано възпроизвеждане (при натискане на клавиш R) и
    режима на повторение (при натискане на клавиша L).
+5. Има някои слоеви прозорци и панели, които NVDA не може да фокусира
+   автоматично, когато се показват. Натиснете Control+TAB, за да опитате да
+   ги изведете на преден план.
 
 * Важна забележка: Тази добавка е оптимизирана да работи с версия 3.0 на VLC
   и по-нови. Няма да работи правилно с по-стари версии. Ако използвате
   версия 2.x на VLC,  [изтеглете старата версия на добавката][1].
-
+* Обхваща се от общия публичен лиценз на GNU. Вижте [file
+  COPYING.txt](https://github.com/javidominguez/VLC/blob/master/COPYING.txt)
+  за повече подробности.
 
 [[!tag dev stable]]
 
-[1]: https://addons.nvda-project.org/files/get.php?file=vlc [2]:
-https://addons.nvda-project.org/files/get.php?file=vlc-18
+[1]: https://addons.nvda-project.org/files/get.php?file=vlc
+
+[2]: https://addons.nvda-project.org/files/get.php?file=vlc-18
+
+[3]: https://addons.nvda-project.org/files/get.php?file=vlc-dev
