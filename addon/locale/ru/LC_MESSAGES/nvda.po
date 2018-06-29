@@ -1,0 +1,127 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: vlc 1.2\n"
+"Report-Msgid-Bugs-To: nvda-translations@freelists.org\n"
+"POT-Creation-Date: 2016-04-22 22:00+1000\n"
+"PO-Revision-Date: 2016-05-18 00:05+0500\n"
+"Language: ru\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Last-Translator: Denis Shishkin <outsidepro@rambler.ru>\n"
+"Language-Team: \n"
+"X-Generator: Poedit 1.8.7\n"
+
+#: addon/appModules/vlc.py:63
+#, python-format
+msgid "%d hours "
+msgstr "%d ч. "
+
+#: addon/appModules/vlc.py:65
+#, python-format
+msgid "%d hour "
+msgstr "%d час "
+
+#: addon/appModules/vlc.py:76
+#, python-format
+msgid "%s%d minutes "
+msgstr "%s%d мин. "
+
+#: addon/appModules/vlc.py:78
+#, python-format
+msgid "%s%d minute "
+msgstr "%s%d минута "
+
+#: addon/appModules/vlc.py:80
+#, python-format
+msgid "%s %d seconds"
+msgstr "%s %d сек."
+
+#: addon/appModules/vlc.py:82
+#, python-format
+msgid "%s %d second"
+msgstr "%s %d секунда"
+
+#: addon/appModules/vlc.py:130
+msgid "There are no controls available"
+msgstr "Нет доступных элементов управления"
+
+#: addon/appModules/vlc.py:139 addon/appModules/vlc.py:237
+msgid "checked"
+msgstr "отмечено"
+
+#: addon/appModules/vlc.py:141 addon/appModules/vlc.py:239
+#: addon/appModules/vlc.py:277 addon/appModules/vlc.py:286
+msgid "not checked"
+msgstr "не отмечено"
+
+#: addon/appModules/vlc.py:143
+msgid "unavailable"
+msgstr "недоступно"
+
+#: addon/appModules/vlc.py:174
+#, python-format
+msgid "%s of %s"
+msgstr "%s из %s"
+
+#: addon/appModules/vlc.py:176
+msgid " playing"
+msgstr " проигрывается"
+
+#: addon/appModules/vlc.py:178 addon/appModules/vlc.py:271
+msgid "Repeat mode"
+msgstr "Режим повтора"
+
+#: addon/appModules/vlc.py:180 addon/appModules/vlc.py:280
+msgid "Shuffle mode"
+msgstr "Режим перемешивания"
+
+#: addon/appModules/vlc.py:206
+#, python-format
+msgid "%d items in playlist"
+msgstr "Элементов в плейлисте: %d"
+
+#: addon/appModules/vlc.py:224 addon/appModules/vlc.py:228
+msgid "Playlist is not visible"
+msgstr "Плейлист невидим"
+
+#: addon/appModules/vlc.py:247 addon/appModules/vlc.py:266
+msgid "This item is outside the window"
+msgstr "Элемент вне окна"
+
+#: addon/appModules/vlc.py:275 addon/appModules/vlc.py:284
+msgid "Checked"
+msgstr "Отмечено"
+
+#: addon/appModules/vlc.py:323
+msgid "edit"
+msgstr "редактор"
+
+#: addon/appModules/vlc.py:324
+msgid "button"
+msgstr "кнопка"
+
+#: addon/appModules/vlc.py:325
+msgid "tab control"
+msgstr "панель вкладок"
+
+#. Add-on summary, usually the user visible name of the addon.
+#. Translators: Summary for this add-on to be shown on installation and add-on information.
+#: buildVars.py:17
+msgid "VLC Media Player"
+msgstr "VLC Media Player"
+
+#. Add-on description
+#. Translators: Long description to be shown for this add-on on add-on information from add-ons manager
+#: buildVars.py:20
+msgid ""
+"It provides some accessibility features for VLC Media Player, as improve "
+"navigation  or read status bar"
+msgstr ""
+"Предоставляет дополнительные возможности доступности медиа-плеера VLC, "
+"такие, как улучшенная навигация или чтение строки состояния."

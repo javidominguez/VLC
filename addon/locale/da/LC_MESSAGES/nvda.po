@@ -1,0 +1,103 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: vlc 1.0\n"
+"Report-Msgid-Bugs-To: nvda-translations@freelists.org\n"
+"POT-Creation-Date: 2015-10-30 22:00+1000\n"
+"PO-Revision-Date: 2016-02-25 23:28-0800\n"
+"Last-Translator: Bue Vester-Andersen <bue@vester-andersen.dk>\n"
+"Language-Team: Dansk <LL@li.org>\n"
+"Language: da\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.5.5\n"
+
+#, python-format
+msgid "%d hours "
+msgstr "%d timer "
+
+#, python-format
+msgid "%d hour "
+msgstr "%d time "
+
+#, python-format
+msgid "%s%d minutes "
+msgstr "%s%d minutter "
+
+#, python-format
+msgid "%s%d minute "
+msgstr "%s%d minut "
+
+#, python-format
+msgid "%s %d seconds"
+msgstr "%s %d sekunder"
+
+#, python-format
+msgid "%s %d second"
+msgstr "%s %d sekund"
+
+msgid "There are no controls available"
+msgstr "Der er ingen kontroller tilgængelig"
+
+msgid "checked"
+msgstr "markeret"
+
+msgid "not checked"
+msgstr "ikke markeret"
+
+msgid "unavailable"
+msgstr "Ikke tilgængelig"
+
+#, python-format
+msgid "%s of %s"
+msgstr "%s af %s"
+
+msgid " playing"
+msgstr "afspiller"
+
+msgid "Repeat mode"
+msgstr "Gentagetilstand"
+
+msgid "Shuffle mode"
+msgstr "Blandetilstand"
+
+#, python-format
+msgid "%d items in playlist"
+msgstr "%d emner i afspilningslisten"
+
+msgid "Playlist is not visible"
+msgstr "Afspilningslisten er ikke synlig"
+
+msgid "This item is outside the window"
+msgstr "Emnet er uden for vinduet"
+
+msgid "Checked"
+msgstr "markeretmarkeret"
+
+msgid "edit"
+msgstr "edit"
+
+msgid "button"
+msgstr "knap"
+
+msgid "tab control"
+msgstr "faneblad"
+
+#. Add-on summary, usually the user visible name of the addon.
+#. Translators: Summary for this add-on to be shown on installation and add-on information.
+msgid "VLC Media Player"
+msgstr "VLC Media Player"
+
+#. Add-on description
+#. Translators: Long description to be shown for this add-on on add-on information from add-ons manager
+msgid ""
+"It provides some accessibility features for VLC Media Player, as improve "
+"navigation  or read status bar"
+msgstr ""
+"Giver nogle tilgængelighedsfunktioner i VLC Media Player, f.eks. forbedret "
+"navigation og læsning af statuslinjuen"

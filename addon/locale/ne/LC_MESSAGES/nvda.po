@@ -1,0 +1,103 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: vlc 1.0\n"
+"Report-Msgid-Bugs-To: nvda-translations@freelists.org\n"
+"POT-Creation-Date: 2015-10-30 22:00+1000\n"
+"PO-Revision-Date: 2016-02-26 02:19-0800\n"
+"Last-Translator: drishtibachak@gmail.com\n"
+"Language-Team: \n"
+"Language: ne\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.5.5\n"
+
+#, python-format
+msgid "%d hours "
+msgstr "%d घन्टाहरू"
+
+#, python-format
+msgid "%d hour "
+msgstr "%d घन्टा"
+
+#, python-format
+msgid "%s%d minutes "
+msgstr "%s%d मेनेटहरू"
+
+#, python-format
+msgid "%s%d minute "
+msgstr "%s%d मेनेट"
+
+#, python-format
+msgid "%s %d seconds"
+msgstr "%s %d सेकेन्डहरू"
+
+#, python-format
+msgid "%s %d second"
+msgstr "%s %d सेकेन्ड"
+
+msgid "There are no controls available"
+msgstr "कुनै नियन्त्रक पाईएन ।"
+
+msgid "checked"
+msgstr "चिनो लगाएको"
+
+msgid "not checked"
+msgstr "चिनो लगाएको छैन ।"
+
+msgid "unavailable"
+msgstr "अनुपलब्ध"
+
+#, python-format
+msgid "%s of %s"
+msgstr "%s को %s"
+
+msgid " playing"
+msgstr "चलिरहेको"
+
+msgid "Repeat mode"
+msgstr "दोहोरिने मुद्रा"
+
+msgid "Shuffle mode"
+msgstr "फेरबदल मुद्रा"
+
+#, python-format
+msgid "%d items in playlist"
+msgstr "%d  सूचीसामाग्री "
+
+msgid "Playlist is not visible"
+msgstr "बजाउने सूची देखिदैन"
+
+msgid "This item is outside the window"
+msgstr "यो सामाग्री सञ्झ्याल बाहिर छ ।"
+
+msgid "Checked"
+msgstr "चिनो लगाएको"
+
+msgid "edit"
+msgstr "सम्पादन"
+
+msgid "button"
+msgstr "टाँक"
+
+msgid "tab control"
+msgstr "ट्याब नियन्त्रक "
+
+#. Add-on summary, usually the user visible name of the addon.
+#. Translators: Summary for this add-on to be shown on installation and add-on information.
+msgid "VLC Media Player"
+msgstr "VLC Media Player"
+
+#. Add-on description
+#. Translators: Long description to be shown for this add-on on add-on information from add-ons manager
+msgid ""
+"It provides some accessibility features for VLC Media Player, as improve "
+"navigation  or read status bar"
+msgstr ""
+"यसले VLC Media Player को विचरणमा सुधार गरेर अथवा स्थिति पट्टीको पाठ पढेर केही हद "
+"सम्म पहुँचयोग्य बनाउँछ । "
