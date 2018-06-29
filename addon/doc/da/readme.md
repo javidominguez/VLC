@@ -1,26 +1,38 @@
 # VLC Media Player #
 
 * Forfatter: Javi Dominguez
-* Download [stabil version][2]
+* Download [stable version][2]
+* Download [development version][3]
 
 Denne tilføjelse øger tilgængelighed for VLC Media Player.
 
-1. Allows navigating through the playback controls using Tab and
-   Shift+Tab. To activate a selected control press enter.
-2. Reads status bar information (press I). The gesture can be set up in NVDA
-   preferences.
-3. Says elapsed time when moving back and forward using VLC keystrokes:
-   Control plus left/right arrow to skip 1 minute and Shift plus left/right
-   arrows to skip 5 seconds. You can set the verbosity in the NVDA
-   preferences. You can also assign a keyboard shortcut to toggle it.
-4. Announces state when change random mode (key R) and repeat mode (key L).
+1. Lader dig flytte mellem afspilningsmulighederne ved hjælp af tab og
+   skift+tab. For at aktivere det valgte element skal du trykke på enter.
+2. Læs information på statuslinjen (tryk I). Dette tastetryk kan ændres i
+   NVDAs dialog "Inputbevægelser."
+3. Siger forløbet tid når du bevæger dig tilbage og fremad ved hjælp af VLC
+   tastetryk: CTRL+venstre og højre pil for at springe 1 minut og
+   skift+venstre og højre pil for at springe tilbage og fremad 5
+   sekunder. Du kan indstille annonceringen af dette via NVDAs
+   indstillinger. Du kan også tildele et tastetryk til dette.
+4. Annoncerer status når der skiftes mellem tilfældig tilstand (tasten R) og
+   gentagelsestilstand (tasten L).
+5. There are some layered windows and panels that NVDA is not able to focus
+   it automatically when they are displayed. Press Control+Tab to try to
+   bring them to the front.
 
-* Important note: This addon is optimized for versions of VLC 3.0 and
-  higher; it will not work correctly with earlier versions. To use VLC 2.x
-  [download the old version of the addon.][1]
-
+* Vigtig bemærkning: Denne tilføjelsespakke er optimeret til versioner af
+  VLC 3.0 og højere; den vil ikke fungere korrekt med tidligere
+  versioner. For at bruge VLC 2.x [hent den gamle version af
+  tilføjelsen.][1]
+* Covered by the GNU General Public License. See the [file
+  COPYING.txt](https://github.com/javidominguez/VLC/blob/master/COPYING.txt)
+  for more details.
 
 [[!tag dev stable]]
 
-[1]: https://addons.nvda-project.org/files/get.php?file=vlc [2]:
-https://addons.nvda-project.org/files/get.php?file=vlc-18
+[1]: https://addons.nvda-project.org/files/get.php?file=vlc
+
+[2]: https://addons.nvda-project.org/files/get.php?file=vlc-18
+
+[3]: https://addons.nvda-project.org/files/get.php?file=vlc-dev

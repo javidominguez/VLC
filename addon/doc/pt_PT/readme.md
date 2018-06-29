@@ -1,7 +1,8 @@
 # VLC Media Player #
 
 * Autor: Javi Dominguez
-* Baixar [versão estável][2]
+* Baixar [versão estável][2] 
+* Download [development version][3]
 
 Este extra fornece alguns recursos de acessibilidade para o VLC Media
 Player.
@@ -17,13 +18,21 @@ Player.
    um atalho de teclado para modificá-lo.
 4. Anuncia o estado quando mudar para o modo aleatório (tecla R) e para o
    modo de repetição (tecla L).
+5. There are some layered windows and panels that NVDA is not able to focus
+   it automatically when they are displayed. Press Control+Tab to try to
+   bring them to the front.
 
 * Nota importante: Este extra é optimizado para versões do VLC 3.0 e
   superior; não funcionará correctamente com versões anteriores. Para usar o
   VLC 2.x [baixe a versão antiga do addon.] [1]
-
+* Covered by the GNU General Public License. See the [file
+  COPYING.txt](https://github.com/javidominguez/VLC/blob/master/COPYING.txt)
+  for more details.
 
 [[!tag dev stable]]
 
-[1]: https://addons.nvda-project.org/files/get.php?file=vlc [2]:
-https://addons.nvda-project.org/files/get.php?file=vlc-18
+[1]: https://addons.nvda-project.org/files/get.php?file=vlc
+
+[2]: https://addons.nvda-project.org/files/get.php?file=vlc-18
+
+[3]: https://addons.nvda-project.org/files/get.php?file=vlc-dev
