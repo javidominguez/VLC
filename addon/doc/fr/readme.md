@@ -2,7 +2,7 @@
 
 * Auteur : Javi Dominguez
 * Télécharger [version stable][2]
-* Download [development version][3]
+* Télécharger [version de développement][3]
 
 Ce module complémentaire fournit des fonctionnalités d'accessibilité pour
 VLC Media Player.
@@ -19,17 +19,17 @@ VLC Media Player.
    basculer.
 4. Annonce l'état lors du changement en mode aléatoire (touche R) et en mode
    répétition (touche L).
-5. There are some layered windows and panels that NVDA is not able to focus
-   it automatically when they are displayed. Press Control+Tab to try to
-   bring them to the front.
+5. Certaines fenêtres et certains panneaux ne peuvent pas avoir le focus
+   lorsqu'ils sont affichés. Appuyez sur Contrôle+Tab pour essayer de les
+   amener à l'avant.
 
 * Note importante : Ce module complémentaire est optimisé pour les versions
   de VLC 3.0 et supérieures; cela ne fonctionnera pas correctement avec les
   versions antérieures. Pour utiliser VLC 2.x [téléchargez l'ancienne
   version du module complémentaire.][1]
-* Covered by the GNU General Public License. See the [file
+* Couvert par la licence publique générale GNU. Voir le [fichier
   COPYING.txt](https://github.com/javidominguez/VLC/blob/master/COPYING.txt)
-  for more details.
+  pour plus de détails.
 
 [[!tag dev stable]]
 

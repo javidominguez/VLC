@@ -2,7 +2,7 @@
 
 * Autor: Javi Dominguez
 * [stabile Version herunterladen][2]
-* Download [development version][3]
+* Herunterladen der [Entwicklerversion][3]
 
 Diese Erweiterung stellt Funktionen zur Verbesserung der Zugänglichkeit für
 VLC media player zur Verfügung.
@@ -19,16 +19,16 @@ VLC media player zur Verfügung.
    Tastenkombination zum Umschalten zuweisen.
 4. Gibt den Status beim Ändern des Zufallsmodus (Taste R) und des
    Wiederholungsmodus (Taste L) an.
-5. There are some layered windows and panels that NVDA is not able to focus
-   it automatically when they are displayed. Press Control+Tab to try to
-   bring them to the front.
+5. Es gibt einige mehrschichtige Fenster und Panels, die NVDA nicht
+   automatisch fokussieren kann, wenn sie angezeigt werden. Drücken Sie
+   Strg+Tab, um sie nach vorne zu bringen.
 
 * Wichtiger Hinweis: Dieses Addon ist für VLC 3.0 und höher optimiert; Es
   wird nicht korrekt mit früheren Versionen funktionieren. Um VLC 2.x zu
   verwenden, [laden Sie die alte Version des Addons herunter.][1]
-* Covered by the GNU General Public License. See the [file
-  COPYING.txt](https://github.com/javidominguez/VLC/blob/master/COPYING.txt)
-  for more details.
+* Lizenziert durch GNU General Public License. Weitere Informationen finden
+  Sie in der [Datei
+  COPYING.txt](https://github.com/javidominguez/VLC/blob/master/COPYING.txt).
 
 [[!tag dev stable]]
 

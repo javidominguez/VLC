@@ -2,7 +2,7 @@
 
 * Tekijä: Javi Dominguez
 * Lataa [vakaa versio][2]
-* Download [development version][3]
+* Lataa [kehitysversio][3]
 
 Tämä lisäosa tarjoaa joitakin saavutettavuutta parantavia toimintoja
 VLC-mediasoittimelle.
@@ -18,16 +18,16 @@ VLC-mediasoittimelle.
    NVDA:n asetuksista. Asetuksen muuttamiseen on mahdollista määrittää myös
    näppäinkomento.
 4. Ilmoittaa, kun satunnaissoiton (R) ja uudelleentoiston (L) tila muuttuu.
-5. There are some layered windows and panels that NVDA is not able to focus
-   it automatically when they are displayed. Press Control+Tab to try to
-   bring them to the front.
+5. NVDA ei pysty siirtämään kohdistusta automaattisesti joihinkin
+   kerrostettuihin ikkunoihin ja paneeleihin, kun ne näytetään. Paina
+   Ctrl+Sarkain yrittääksesi tuoda ne etualalle.
 
 * Tärkeä huomautus: Tämä lisäosa on optimoitu VLC:n 3.0-versiolle ja
   uudemmille; se ei toimi oikein vanhempien versioiden kanssa. Käytä VLC
   2.x-versiota [lataamalla lisäosan aiempi versio.][1]
-* Covered by the GNU General Public License. See the [file
-  COPYING.txt](https://github.com/javidominguez/VLC/blob/master/COPYING.txt)
-  for more details.
+* Suojattu GNU GPL -lisenssillä. Katso lisätietoja
+  [COPYING.txt-tiedostosta.]
+  (https://github.com/javidominguez/VLC/blob/master/COPYING.txt)
 
 [[!tag dev stable]]
 
