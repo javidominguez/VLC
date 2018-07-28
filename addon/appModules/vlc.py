@@ -29,9 +29,10 @@ try:
 except:
 	SettingsPanel = object
 try:
-	from qtEditableText import QTEditableText
+	from qtEditableText import QTEditableText, SpecialAlphanumeric
 except:
 	from NVDAObjects.behaviors import EditableTextWithAutoSelectDetection as QTEditableText
+	SpecialAlphanumeric = {}
 from string import printable
 
 addonHandler.initTranslation()
@@ -76,6 +77,7 @@ class AppModule(appModuleHandler.AppModule):
 
 	def chooseNVDAObjectOverlayClasses(self, obj, clsList):
 		if obj.role == controlTypes.ROLE_APPLICATION:
+			obj.parent = api.getDesktopObject()
 			clsList.insert(0, VLC_application)
 		if obj.windowClassName == u'Qt5QWindowIcon':
 			if obj.role == controlTypes.ROLE_BORDER or obj.role == controlTypes.ROLE_PANE:
@@ -94,7 +96,7 @@ class AppModule(appModuleHandler.AppModule):
 					obj.role = controlTypes.ROLE_LAYEREDPANE
 					if obj.windowText in self.embeddedWindows:
 						obj.name = self.embeddedWindows[obj.windowText]
-					elif api.getForegroundObject().name and obj.windowText != api.getForegroundObject().name:
+					elif api.getForegroundObject() and api.getForegroundObject().name and obj.windowText != api.getForegroundObject().name:
 						obj.description = obj.windowText
 					clsList.insert(0, VLC_pane)
 			elif obj.role == controlTypes.ROLE_WINDOW:
@@ -578,13 +580,12 @@ class VLC_StatusBar(IAccessible):
 
 class VLC_EditableText(QTEditableText):
 
-	def event_gainFocus(self):
-		self.reportFocus()
-		self.typeBuffer = ""
-		self.fakeCaret = len(self.value)-1 if self.value else 0
-		self.startSelection = -1
-		self.alphanumeric = printable[:62]+u"áéíóúñ"
-		self.sign = printable[62:94]
+	def initOverlayClass(self):
+		super(QTEditableText,self).initOverlayClass()
+		if self.language not in SpecialAlphanumeric:
+			#TRANSLATORS: To successfully synchronize the cursor when it is moved by words, it is necessary to distinguish the alphanumeric characters of the punctuation signs.
+			#TRANSLATORS: This string should not be translated literally. Should be a list of the special characters that are considered to be alphanumeric in your local alphabet, for example the ñ in Spanish.
+			self.alphanumeric = printable[:62]+_("SpecialAlphanumericCharactersInYourLanguage")
 
 class VLCSettings(settingsDialogs.SettingsDialog):
 	#TRANSLATORS: Settings dialog title

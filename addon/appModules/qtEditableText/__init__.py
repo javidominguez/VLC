@@ -6,36 +6,42 @@
 #Copyright (C) 2018 Javi Dominguez <fjavids@gmail.com>
 
 from NVDAObjects.behaviors import EditableTextWithAutoSelectDetection
-from string import printable
+from string import printable, punctuation
+from keyboardHandler import KeyboardInputGesture
+from globalCommands import commands
+from os import environ
+import scriptHandler
 import config
 import ui
 
+SpecialAlphanumeric = {
+"en": printable[:62],
+"es": printable[:62]+u"áéíóúàèìòùäëïöüâêîôûñçÁÉÍÓÚÀÈÌÒÙÄËÏÖÜÂÊÎÔÛÑÇ"
+}
+
 class QTEditableText(EditableTextWithAutoSelectDetection):
 
-	debug = False
-	alphanumeric = ""
-	sign = ""
-	fakeCaret = 0
+	def _get_language(self):
+		return environ["OOBEUILANG"].split("-")[0]
 
-	def __init__(self, *args, **kwargs):
-		EditableTextWithAutoSelectDetection.__init__(*args, **kwargs)
-		self.fakeCaret = len(self.value)
+	def initOverlayClass(self, *args, **kwargs):
+		self.debug = False
+		self.fakeCaret = len(self.value)-1 if self.value else 0
 		self.startSelection = -1
-		self.alphanumeric = printable[:62]
-		self.sign = printable[62:94]
+		self.alphanumeric = SpecialAlphanumeric[self.language] if self.language in SpecialAlphanumeric else SpecialAlphanumeric["en"]
+		self.sign = ""
+		for k in commands._gestureMap:
+			if commands._gestureMap[k].__name__ == "script_reportCurrentSelection":
+				self.bindGesture(k, "reportCurrentSelection")
 
 	def event_gainFocus(self):
 		self.reportFocus()
 		self.typeBuffer = ""
-		self.fakeCaret = len(self.value)-1 if self.value else 0
-		self.startSelection = -1
-		self.alphanumeric = printable[:62]
-		self.sign = printable[62:94]
 
 	def event_typedCharacter(self, *args, **kwargs):
 		self.startSelection = -1
 		ch = kwargs["ch"]
-		if ch in self.alphanumeric+self.sign:
+		if ch in self.alphanumeric+punctuation:
 			self.typeBuffer = self.typeBuffer+ch
 			self.fakeCaret = self.fakeCaret+1
 			if config.conf["keyboard"]["speakTypedCharacters"]: ui.message(ch)
@@ -128,7 +134,7 @@ class QTEditableText(EditableTextWithAutoSelectDetection):
 		self.startSelection = -1
 		gesture.send()
 		if self.fakeCaret > 0: self.fakeCaret = 0
-		ui.message(self.value[self.fakeCaret ])
+		if self.value: ui.message(self.value[self.fakeCaret ])
 
 	def script_selectHome(self, gesture):
 		self.typeBuffer = ""
@@ -139,11 +145,12 @@ class QTEditableText(EditableTextWithAutoSelectDetection):
 			unselection = True
 		gesture.send()
 		self.fakeCaret = 0
-		ui.message(self.value[self.fakeCaret:self.startSelection])
-		if not unselection or self.fakeCaret < self.startSelection:
-			ui.message(_("selected"))
-		else:
-			ui.message(_("deselected"))
+		if self.value:
+			ui.message(self.value[self.fakeCaret:self.startSelection])
+			if not unselection or self.fakeCaret < self.startSelection:
+				ui.message(_("selected"))
+			else:
+				ui.message(_("deselected"))
 
 	def script_supr(self, gesture):
 		self.typeBuffer = ""
@@ -167,6 +174,42 @@ class QTEditableText(EditableTextWithAutoSelectDetection):
 		if self.value and self.fakeCaret > 0: ui.message(self.value[self.fakeCaret-1])
 		gesture.send()
 		if self.fakeCaret > 0: self.fakeCaret = self.fakeCaret - 1
+
+	def script_removeWords(self, gesture):
+		self.typeBuffer = ""
+		if self.startSelection >= self.fakeCaret:
+			value = self.value
+			if gesture.mainKeyName == "backspace":
+				self.previousWord()
+				ui.message(_("selected"))
+			else:
+				self.nextWord(1)
+				ui.message(_("deselected"))
+			gesture.send()
+			self.removeSelection(value)
+			return
+		elif self.startSelection >= 0:
+			if gesture.mainKeyName == "backspace":
+				self.previousWord()
+				ui.message(_("deselected"))
+			else:
+				self.nextWord(1)
+				ui.message(_("selected"))
+			value = self.value
+			gesture.send()
+			self.removeSelection(value)
+			return
+		if gesture.mainKeyName == "backspace":
+			self.previousWord()
+			gesture.send()
+			ui.message(_("selection removed"))
+		elif gesture.mainKeyName == "delete":
+			oldCaret = self.fakeCaret
+			self.nextWord(1)
+			gesture.send()
+			ui.message(_("selection removed"))
+			self.fakeCaret = oldCaret
+
 
 	def script_cut(self, gesture):
 		value = self.value
@@ -205,9 +248,9 @@ class QTEditableText(EditableTextWithAutoSelectDetection):
 		if self.value:
 			oldCaret = self.fakeCaret
 			if self.fakeCaret >= len(self.value): return
-			if self.value[self.fakeCaret] in self.sign:
+			if self.value[self.fakeCaret] in punctuation:
 				try:
-					while self.value[self.fakeCaret] in self.sign:
+					while self.value[self.fakeCaret] in punctuation:
 						self.fakeCaret = self.fakeCaret+1
 				except IndexError:
 					return
@@ -228,6 +271,8 @@ class QTEditableText(EditableTextWithAutoSelectDetection):
 					while self.value[self.fakeCaret] == " ":
 						self.fakeCaret = self.fakeCaret+1
 				except IndexError:
+					if selection:
+						ui.message("%s%s" % (self.value[oldCaret:self.fakeCaret-1], self.value[self.fakeCaret-1]))
 					return
 			try:
 				if selection:
@@ -263,10 +308,10 @@ class QTEditableText(EditableTextWithAutoSelectDetection):
 				self.fakeCaret = self.fakeCaret-1
 			oldCaret = self.fakeCaret
 			# Current character is a punctuation mark
-			if self.fakeCaret >0 and self.value[self.fakeCaret] in self.sign and self.value[self.fakeCaret-1] not in self.sign:
+			if self.fakeCaret >0 and self.value[self.fakeCaret] in punctuation and self.value[self.fakeCaret-1] not in punctuation:
 				self.fakeCaret = self.fakeCaret-1
-			if self.value[self.fakeCaret] in self.sign and self.fakeCaret >= 0:
-				while self.value[self.fakeCaret] in self.sign and self.fakeCaret >= 0:
+			if self.value[self.fakeCaret] in punctuation and self.fakeCaret >= 0:
+				while self.value[self.fakeCaret] in punctuation and self.fakeCaret >= 0:
 					self.fakeCaret = self.fakeCaret-1
 				self.fakeCaret = self.fakeCaret+1
 				if selection:
@@ -278,7 +323,7 @@ class QTEditableText(EditableTextWithAutoSelectDetection):
 			if self.value[self.fakeCaret] == " " and self.fakeCaret > 0:
 				while self.value[self.fakeCaret] == " " and self.fakeCaret > 0:
 					self.fakeCaret = self.fakeCaret-1
-				group = self.alphanumeric if self.value[self.fakeCaret] in self.alphanumeric else self.sign
+				group = self.alphanumeric if self.value[self.fakeCaret] in self.alphanumeric else punctuation
 				self.fakeCaret = self.fakeCaret-1 if self.fakeCaret > 0 else 0
 				while self.value[self.fakeCaret] in group and self.fakeCaret >0:
 					self.fakeCaret = self.fakeCaret-1
@@ -294,19 +339,33 @@ class QTEditableText(EditableTextWithAutoSelectDetection):
 					self.fakeCaret = self.fakeCaret-1
 				if self.fakeCaret>0:
 					self.fakeCaret = self.fakeCaret+1
+				#@ ui.message(str(oldCaret))
+				if oldCaret == len(self.value)-1:
+					oldCaret = oldCaret+1
 				ui.message(self.value[self.fakeCaret:oldCaret])
 				return
 			else:
-				group = self.sign if self.value[self.fakeCaret] in self.sign else " "
+				group = punctuation if self.value[self.fakeCaret] in punctuation else " "
 				while self.value[self.fakeCaret] in group and self.fakeCaret > 0:
 					self.fakeCaret = self.fakeCaret-1
 				if self.value[self.fakeCaret+1] == " ":
-					group = self.sign if self.value[self.fakeCaret] in self.sign else self.alphanumeric
+					group = punctuation if self.value[self.fakeCaret] in punctuation else self.alphanumeric
 					while self.value[self.fakeCaret] in group and self.fakeCaret > 0:
 						self.fakeCaret = self.fakeCaret-1
 				if self.fakeCaret > 0:
 					self.fakeCaret = self.fakeCaret+1
 			ui.message(self.value[self.fakeCaret:oldCaret])
+
+	def script_reportCurrentSelection(self, gesture):
+		if self.startSelection <0 or self.fakeCaret == self.startSelection or not self.value:
+			scriptHandler.executeScript(commands.script_reportCurrentSelection, None)
+			return
+		ui.message(_("selected"))
+		if self.startSelection > self.fakeCaret:
+			ui.message(self.value[self.fakeCaret:self.startSelection])
+		else:
+			ui.message(self.value[self.startSelection:self.fakeCaret])
+	script_reportCurrentSelection.__doc__ = commands.script_reportCurrentSelection.__doc__
 
 	__gestures = {
 	"kb:rightArrow":"nextCh",
@@ -319,6 +378,8 @@ class QTEditableText(EditableTextWithAutoSelectDetection):
 	"kb:shift+home":"selectHome",
 	"kb:delete":"supr",
 	"kb:backspace":"back",
+	"kb:control+backspace":"removeWords",
+	"kb:control+delete":"removeWords",
 	"kb:control+rightArrow":"nextWord",
 	"kb:control+shift+rightArrow":"selectNextWord",
 	"kb:control+leftArrow":"previousWord",
