@@ -9,7 +9,7 @@ from NVDAObjects.behaviors import EditableTextWithAutoSelectDetection
 from string import printable, punctuation
 from keyboardHandler import KeyboardInputGesture
 from globalCommands import commands
-from os import environ
+from locale import getdefaultlocale
 import scriptHandler
 import config
 import ui
@@ -22,7 +22,7 @@ SpecialAlphanumeric = {
 class QTEditableText(EditableTextWithAutoSelectDetection):
 
 	def _get_language(self):
-		return environ["OOBEUILANG"].split("-")[0]
+		return getdefaultlocale()[0].split("_")[0]
 
 	def initOverlayClass(self, *args, **kwargs):
 		self.debug = False
