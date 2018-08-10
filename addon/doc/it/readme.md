@@ -1,8 +1,8 @@
 # VLC Media Player #
 
 * Autore: Javi Dominguez
-* Download [stable version][2]
-* Download [development version][3]
+* Download [versione stabile][2]
+* Download [versione in sviluppo][3]
 
 Questo componente aggiuntivo fornisce alcune caratteristiche di
 accessibilità per VLC Media Player.
@@ -19,17 +19,17 @@ accessibilità per VLC Media Player.
    attivare/disattivare l'impostazione.
 4. Legge lo stato quando si passa tra modo random (tasto R) e modo
    ripetizione  (tasto L).
-5. There are some layered windows and panels that NVDA is not able to focus
-   it automatically when they are displayed. Press Control+Tab to try to
-   bring them to the front.
+5. Ci sono alcune finestre sovrapposte e riquadri che NVDA non è in grado di
+   mettere a fuoco automaticamente quando vengono visualizzati. Premere
+   ctrl+Tab per cercare di raggiungere questi elementi.
 
 * Nota importante: questo componente aggiuntivo funziona con VLC versione
   3.0 e successive; non è più ottimizzato per le versioni precedenti. Nel
   caso si possegga VLC 2.x e non lo si desidera aggiornare, è necessario
   [scaricare il vecchio componente aggiuntivo.][1]
-* Covered by the GNU General Public License. See the [file
+* Coperto dalla licenza GNU General Public License. Si veda il [file
   COPYING.txt](https://github.com/javidominguez/VLC/blob/master/COPYING.txt)
-  for more details.
+  per ulteriori dettagli.
 
 [[!tag dev stable]]
 
@@ -37,4 +37,6 @@ accessibilità per VLC Media Player.
 
 [2]: https://addons.nvda-project.org/files/get.php?file=vlc-18
 
-[3]: https://addons.nvda-project.org/files/get.php?file=vlc-dev
+[3]: https://addons.nvda-project.org/files/get.php?file=vlc-dev[1]:
+https://addons.nvda-project.org/files/get.php?file=vlc [2]:
+https://addons.nvda-project.org/files/get.php?file=vlc-18

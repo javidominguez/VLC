@@ -2,7 +2,7 @@
 
 * Autor: Javi Dominguez
 * Pobierz [wersja stabilna][2]
-* Download [development version][3]
+* Pobierz [wersja rozwojowa][3]
 
 Ten dodatek dodaje niektóre dostępnościowe funkcje dla VLC Media Playera.
 
