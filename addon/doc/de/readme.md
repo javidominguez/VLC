@@ -1,8 +1,8 @@
 # VLC Media Player #
 
 * Autor: Javi Dominguez
-* [stabile Version herunterladen][2]
-* Herunterladen der [Entwicklerversion][3]
+* [Stabile Version herunterladen][2]
+* [Testversion herunterladen][3]
 
 Diese Erweiterung stellt Funktionen zur Verbesserung der Zugänglichkeit für
 VLC media player zur Verfügung.
