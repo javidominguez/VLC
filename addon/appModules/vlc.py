@@ -28,15 +28,11 @@ try:
 	from gui.settingsDialogs import SettingsPanel
 except:
 	SettingsPanel = object
-import os.path
-import appModules
-appModules.__path__.insert(0, os.path.abspath(os.path.dirname(__file__)))
 try:
 	from qtEditableText import QTEditableText, SpecialAlphanumeric
 except:
 	from NVDAObjects.behaviors import EditableTextWithAutoSelectDetection as QTEditableText
 	SpecialAlphanumeric = {}
-appModules.__path__.pop(0)
 from string import printable
 
 addonHandler.initTranslation()

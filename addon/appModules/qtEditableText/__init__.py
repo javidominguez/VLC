@@ -12,8 +12,7 @@ from globalCommands import commands
 from locale import getdefaultlocale
 import scriptHandler
 import config
-import speech
-import braille
+import ui
 
 SpecialAlphanumeric = {
 "en": printable[:62],
@@ -37,7 +36,6 @@ class QTEditableText(EditableTextWithAutoSelectDetection):
 
 	def event_gainFocus(self):
 		self.reportFocus()
-		braille.handler.handleGainFocus(self)
 		self.typeBuffer = ""
 
 	def event_typedCharacter(self, *args, **kwargs):
@@ -46,23 +44,21 @@ class QTEditableText(EditableTextWithAutoSelectDetection):
 		if ch in self.alphanumeric+punctuation:
 			self.typeBuffer = self.typeBuffer+ch
 			self.fakeCaret = self.fakeCaret+1
-			if config.conf["keyboard"]["speakTypedCharacters"]: speech.speakText(ch)
+			if config.conf["keyboard"]["speakTypedCharacters"]: ui.message(ch)
 		else:
 			if self.typeBuffer:
-				if config.conf["keyboard"]["speakTypedWords"]: speech.speakText(self.typeBuffer)
+				if config.conf["keyboard"]["speakTypedWords"]: ui.message(self.typeBuffer)
 				self.typeBuffer = ""
 		if ch == " ": self.fakeCaret = self.fakeCaret+1
-		self.displayBraille()
 
 	def event_caret(self):
-		if self.debug: speech.speakText(str(self.fakeCaret))
+		if self.debug: ui.message(str(self.fakeCaret))
 
 	def script_nextCh(self, gesture):
 		self.typeBuffer = ""
 		self.startSelection = -1
 		gesture.send()
 		self.nextCh()
-		self.displayBraille()
 
 	def script_selectNextCh(self, gesture):
 		self.typeBuffer = ""
@@ -72,16 +68,15 @@ class QTEditableText(EditableTextWithAutoSelectDetection):
 		self.nextCh(1)
 		sizeAfter = self.startSelection-self.fakeCaret if self.startSelection > self.fakeCaret else self.fakeCaret-self.startSelection
 		if sizeAfter > sizeBefore:
-			speech.speakText(_("selected"))
+			ui.message(_("selected"))
 		else:
-			if self.fakeCaret < len(self.value): speech.speakText(_("deselected"))
-		self.displayBraille()
+			if self.fakeCaret < len(self.value): ui.message(_("deselected"))
 
 	def nextCh(self, selection=0):
 		if self.value:
 			if self.fakeCaret < len(self.value): self.fakeCaret = self.fakeCaret+1
 			try:
-				if self.fakeCaret < len(self.value)+1: speech.speakText(self.value[self.fakeCaret-selection])
+				if self.fakeCaret < len(self.value)+1: ui.message(self.value[self.fakeCaret-selection])
 			except IndexError:
 				pass
 
@@ -90,7 +85,6 @@ class QTEditableText(EditableTextWithAutoSelectDetection):
 		self.startSelection = -1
 		gesture.send()
 		self.previousCh()
-		self.displayBraille()
 
 	def script_selectPreviousCh(self, gesture):
 		self.typeBuffer = ""
@@ -100,17 +94,16 @@ class QTEditableText(EditableTextWithAutoSelectDetection):
 		self.previousCh(1)
 		sizeAfter = self.startSelection-self.fakeCaret if self.startSelection > self.fakeCaret else self.fakeCaret-self.startSelection
 		if sizeAfter > sizeBefore:
-			speech.speakText(_("selected"))
+			ui.message(_("selected"))
 		else:
-			if self.fakeCaret > 0: speech.speakText(_("deselected"))
-		self.displayBraille()
+			if self.fakeCaret > 0: ui.message(_("deselected"))
 
 	def previousCh(self, selection=0):
 		if self.value:
 			if self.fakeCaret > 0: self.fakeCaret = self.fakeCaret-1
-			if selection and self.fakeCaret == 0: speech.speakText(self.value[self.fakeCaret])
+			if selection and self.fakeCaret == 0: ui.message(self.value[self.fakeCaret])
 			else:
-				speech.speakText(self.value[self.fakeCaret])
+				ui.message(self.value[self.fakeCaret])
 
 	def script_end(self, gesture):
 		self.typeBuffer = ""
@@ -118,8 +111,7 @@ class QTEditableText(EditableTextWithAutoSelectDetection):
 		gesture.send()
 		if self.value:
 			self.fakeCaret = len(self.value)
-			if self.fakeCaret < len(self.value): speech.speakText(self.value[self.fakeCaret ])
-		self.displayBraille()
+			if self.fakeCaret < len(self.value): ui.message(self.value[self.fakeCaret ])
 
 	def script_selectEnd(self, gesture):
 		self.typeBuffer = ""
@@ -132,19 +124,17 @@ class QTEditableText(EditableTextWithAutoSelectDetection):
 		if self.value:
 			self.fakeCaret = len(self.value)
 			if not unselection or self.fakeCaret > self.startSelection:
-				speech.speakText(self.value[self.startSelection:])
-				speech.speakText(_("selected"))
+				ui.message(self.value[self.startSelection:])
+				ui.message(_("selected"))
 			else:
-				speech.speakText(_("deselected"))
-		self.displayBraille()
+				ui.message(_("deselected"))
 
 	def script_home(self, gesture):
 		self.typeBuffer = ""
 		self.startSelection = -1
 		gesture.send()
 		if self.fakeCaret > 0: self.fakeCaret = 0
-		if self.value: speech.speakText(self.value[self.fakeCaret ])
-		self.displayBraille()
+		if self.value: ui.message(self.value[self.fakeCaret ])
 
 	def script_selectHome(self, gesture):
 		self.typeBuffer = ""
@@ -156,12 +146,11 @@ class QTEditableText(EditableTextWithAutoSelectDetection):
 		gesture.send()
 		self.fakeCaret = 0
 		if self.value:
-			speech.speakText(self.value[self.fakeCaret:self.startSelection])
+			ui.message(self.value[self.fakeCaret:self.startSelection])
 			if not unselection or self.fakeCaret < self.startSelection:
-				speech.speakText(_("selected"))
+				ui.message(_("selected"))
 			else:
-				speech.speakText(_("deselected"))
-		self.displayBraille()
+				ui.message(_("deselected"))
 
 	def script_supr(self, gesture):
 		self.typeBuffer = ""
@@ -171,10 +160,9 @@ class QTEditableText(EditableTextWithAutoSelectDetection):
 			self.removeSelection(value)
 			return
 		try:
-			if self.value: speech.speakText(self.value[self.fakeCaret+1])
+			if self.value: ui.message(self.value[self.fakeCaret+1])
 		except IndexError:
 			pass
-		self.displayBraille()
 
 	def script_back(self, gesture):
 		self.typeBuffer = ""
@@ -183,10 +171,9 @@ class QTEditableText(EditableTextWithAutoSelectDetection):
 			gesture.send()
 			self.removeSelection(value)
 			return
-		if self.value and self.fakeCaret > 0: speech.speakText(self.value[self.fakeCaret-1])
+		if self.value and self.fakeCaret > 0: ui.message(self.value[self.fakeCaret-1])
 		gesture.send()
 		if self.fakeCaret > 0: self.fakeCaret = self.fakeCaret - 1
-		self.displayBraille()
 
 	def script_removeWords(self, gesture):
 		self.typeBuffer = ""
@@ -194,20 +181,20 @@ class QTEditableText(EditableTextWithAutoSelectDetection):
 			value = self.value
 			if gesture.mainKeyName == "backspace":
 				self.previousWord()
-				speech.speakText(_("selected"))
+				ui.message(_("selected"))
 			else:
 				self.nextWord(1)
-				speech.speakText(_("deselected"))
+				ui.message(_("deselected"))
 			gesture.send()
 			self.removeSelection(value)
 			return
 		elif self.startSelection >= 0:
 			if gesture.mainKeyName == "backspace":
 				self.previousWord()
-				speech.speakText(_("deselected"))
+				ui.message(_("deselected"))
 			else:
 				self.nextWord(1)
-				speech.speakText(_("selected"))
+				ui.message(_("selected"))
 			value = self.value
 			gesture.send()
 			self.removeSelection(value)
@@ -215,29 +202,28 @@ class QTEditableText(EditableTextWithAutoSelectDetection):
 		if gesture.mainKeyName == "backspace":
 			self.previousWord()
 			gesture.send()
-			speech.speakText(_("selection removed"))
+			ui.message(_("selection removed"))
 		elif gesture.mainKeyName == "delete":
 			oldCaret = self.fakeCaret
 			self.nextWord(1)
 			gesture.send()
-			speech.speakText(_("selection removed"))
+			ui.message(_("selection removed"))
 			self.fakeCaret = oldCaret
-		self.displayBraille()
+
 
 	def script_cut(self, gesture):
 		value = self.value
 		gesture.send()
 		self.removeSelection(value)
-		self.displayBraille()
 
 	def removeSelection(self, value=""):
 		if self.startSelection <0 or self.fakeCaret == self.startSelection or not value: return
 		if self.startSelection > self.fakeCaret:
-			speech.speakText(value[self.fakeCaret:self.startSelection])
+			ui.message(value[self.fakeCaret:self.startSelection])
 		else:
-			speech.speakText(value[self.startSelection:self.fakeCaret])
+			ui.message(value[self.startSelection:self.fakeCaret])
 			self.fakeCaret = self.startSelection
-		speech.speakText(_("selection removed"))
+		ui.message(_("selection removed"))
 		self.startSelection = -1
 
 	def script_nextWord(self, gesture):
@@ -245,7 +231,6 @@ class QTEditableText(EditableTextWithAutoSelectDetection):
 		self.startSelection = -1
 		gesture.send()
 		self.nextWord()
-		self.displayBraille()
 
 	def script_selectNextWord(self, gesture):
 		self.typeBuffer = ""
@@ -255,10 +240,9 @@ class QTEditableText(EditableTextWithAutoSelectDetection):
 		self.nextWord(1)
 		sizeAfter = self.startSelection-self.fakeCaret if self.startSelection > self.fakeCaret else self.fakeCaret-self.startSelection
 		if sizeAfter>sizeBefore:
-			speech.speakText(_("selected"))
+			ui.message(_("selected"))
 		else:
-			if self.fakeCaret < len(self.value): speech.speakText(_("deselected"))
-		self.displayBraille()
+			if self.fakeCaret < len(self.value): ui.message(_("deselected"))
 
 	def nextWord(self, selection=0):
 		if self.value:
@@ -281,20 +265,20 @@ class QTEditableText(EditableTextWithAutoSelectDetection):
 						self.fakeCaret = self.fakeCaret+1
 				except IndexError:
 					if selection:
-						speech.speakText("%s%s" % (self.value[oldCaret:self.fakeCaret-1], self.value[self.fakeCaret-1]))
+						ui.message("%s%s" % (self.value[oldCaret:self.fakeCaret-1], self.value[self.fakeCaret-1]))
 					return
 				try:
 					while self.value[self.fakeCaret] == " ":
 						self.fakeCaret = self.fakeCaret+1
 				except IndexError:
 					if selection:
-						speech.speakText("%s%s" % (self.value[oldCaret:self.fakeCaret-1], self.value[self.fakeCaret-1]))
+						ui.message("%s%s" % (self.value[oldCaret:self.fakeCaret-1], self.value[self.fakeCaret-1]))
 					return
 			try:
 				if selection:
-					speech.speakText(self.value[oldCaret:self.fakeCaret])
+					ui.message(self.value[oldCaret:self.fakeCaret])
 				else:
-					speech.speakText(self.value[self.fakeCaret:].split()[0])
+					ui.message(self.value[self.fakeCaret:].split()[0])
 			except IndexError:
 				pass
 
@@ -303,7 +287,6 @@ class QTEditableText(EditableTextWithAutoSelectDetection):
 		self.startSelection = -1
 		gesture.send()
 		self.previousWord()
-		self.displayBraille()
 
 	def script_selectPreviousWord(self, gesture):
 		self.typeBuffer = ""
@@ -313,10 +296,9 @@ class QTEditableText(EditableTextWithAutoSelectDetection):
 		self.previousWord(True)
 		sizeAfter = self.startSelection-self.fakeCaret if self.startSelection > self.fakeCaret else self.fakeCaret-self.startSelection
 		if sizeAfter > sizeBefore:
-			speech.speakText(_("selected"))
+			ui.message(_("selected"))
 		else:
-			if self.fakeCaret > 0: speech.speakText(_("deselected"))
-		self.displayBraille()
+			if self.fakeCaret > 0: ui.message(_("deselected"))
 
 	def previousWord(self, selection=False):
 		if self.value:
@@ -333,9 +315,9 @@ class QTEditableText(EditableTextWithAutoSelectDetection):
 					self.fakeCaret = self.fakeCaret-1
 				self.fakeCaret = self.fakeCaret+1
 				if selection:
-					speech.speakText(self.value[self.fakeCaret:oldCaret])
+					ui.message(self.value[self.fakeCaret:oldCaret])
 				else:
-					speech.speakText(self.value[self.fakeCaret])
+					ui.message(self.value[self.fakeCaret])
 				return
 			# Current character is an space
 			if self.value[self.fakeCaret] == " " and self.fakeCaret > 0:
@@ -347,7 +329,7 @@ class QTEditableText(EditableTextWithAutoSelectDetection):
 					self.fakeCaret = self.fakeCaret-1
 				if self.fakeCaret > 0:
 					self.fakeCaret = self.fakeCaret+1
-				speech.speakText(self.value[self.fakeCaret:oldCaret])
+				ui.message(self.value[self.fakeCaret:oldCaret])
 				return
 			# Current character is alphanumeric
 			if self.fakeCaret > 0 and self.value[self.fakeCaret-1] in self.alphanumeric+" ":
@@ -357,10 +339,10 @@ class QTEditableText(EditableTextWithAutoSelectDetection):
 					self.fakeCaret = self.fakeCaret-1
 				if self.fakeCaret>0:
 					self.fakeCaret = self.fakeCaret+1
-				#@ speech.speakText(str(oldCaret))
+				#@ ui.message(str(oldCaret))
 				if oldCaret == len(self.value)-1:
 					oldCaret = oldCaret+1
-				speech.speakText(self.value[self.fakeCaret:oldCaret])
+				ui.message(self.value[self.fakeCaret:oldCaret])
 				return
 			else:
 				group = punctuation if self.value[self.fakeCaret] in punctuation else " "
@@ -372,31 +354,18 @@ class QTEditableText(EditableTextWithAutoSelectDetection):
 						self.fakeCaret = self.fakeCaret-1
 				if self.fakeCaret > 0:
 					self.fakeCaret = self.fakeCaret+1
-			speech.speakText(self.value[self.fakeCaret:oldCaret])
+			ui.message(self.value[self.fakeCaret:oldCaret])
 
 	def script_reportCurrentSelection(self, gesture):
 		if self.startSelection <0 or self.fakeCaret == self.startSelection or not self.value:
 			scriptHandler.executeScript(commands.script_reportCurrentSelection, None)
 			return
-		speech.speakText(_("selected"))
+		ui.message(_("selected"))
 		if self.startSelection > self.fakeCaret:
-			speech.speakText(self.value[self.fakeCaret:self.startSelection])
+			ui.message(self.value[self.fakeCaret:self.startSelection])
 		else:
-			speech.speakText(self.value[self.startSelection:self.fakeCaret])
+			ui.message(self.value[self.startSelection:self.fakeCaret])
 	script_reportCurrentSelection.__doc__ = commands.script_reportCurrentSelection.__doc__
-
-	def displayBraille(self):
-		if not self.value: return
-		try:
-			brailleCaret = self.fakeCaret % braille.handler.displaySize
-			fragment = self.fakeCaret / braille.handler.displaySize
-			start = 0 + fragment * braille.handler.displaySize
-			end = braille.handler.displaySize * (fragment+1)
-			braille.handler.message(self.value[start:end-1])
-			# omitted for now. Is not well adjusted.
-			# braille.handler.messageBuffer.cursorWindowPos = brailleCaret
-		except ZeroDivisionError:
-			pass
 
 	__gestures = {
 	"kb:rightArrow":"nextCh",
