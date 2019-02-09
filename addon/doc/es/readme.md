@@ -2,7 +2,7 @@
 
 * Autor: Javi Domínguez
 * Descargar [versión estable][2]
-* Download [development version][3]
+* Descargar [versión de desarrollo][3]
 
 Este Complemento proporciona algunas características de accesibilidad para
 VLC Media Player.
@@ -20,17 +20,17 @@ VLC Media Player.
    de teclado para conmutarla.
 4. Verbaliza el estado al cambiar el modo aleatorio (tecla R) y el modo de
    repetición (tecla L).
-5. There are some layered windows and panels that NVDA is not able to focus
-   it automatically when they are displayed. Press Control+Tab to try to
-   bring them to the front.
+5. Hay algunas ventanas y paneles en capa que NVDA no es capaz de enfocar
+   automáticamente cuando se muestran, Pulsa Control+Tab para intentar
+   traerlos al frente.
 
 * Aviso importante: este complemento está optimizado para VLC 3.0 y
   versiones posteriores; no funcionará correctamente en versiones
   anteriores. Para utilizar VLC 2.x, [descarga una versión anterior del
   complemento.][1]
-* Covered by the GNU General Public License. See the [file
+* Cubierto por la GNU General Public License. consulta el [archivo
   COPYING.txt](https://github.com/javidominguez/VLC/blob/master/COPYING.txt)
-  for more details.
+  para más detalles.
 
 [[!tag dev stable]]
 
