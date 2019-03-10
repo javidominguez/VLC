@@ -388,13 +388,16 @@ class QTEditableText(EditableTextWithAutoSelectDetection):
 	def displayBraille(self):
 		if not self.value: return
 		try:
-			brailleCaret = self.fakeCaret % braille.handler.displaySize
 			fragment = self.fakeCaret / braille.handler.displaySize
 			start = 0 + fragment * braille.handler.displaySize
 			end = braille.handler.displaySize * (fragment+1)
-			braille.handler.message(self.value[start:end-1])
-			# omitted for now. Is not well adjusted.
-			# braille.handler.messageBuffer.cursorWindowPos = brailleCaret
+			braille.handler.message(self.value[start:end])
+			if braille.handler._messageCallLater :
+				braille.handler._messageCallLater .Stop()
+				braille.handler._messageCallLater = None
+			braille.handler.buffer.cursorWindowPos = self.fakeCaret - start
+			braille.handler.buffer.update()
+			braille.handler.update()
 		except ZeroDivisionError:
 			pass
 

@@ -19,7 +19,7 @@ addon_info = {
 	# Translators: Long description to be shown for this add-on on add-on information from add-ons manager
 	"addon_description" : _("Provides some accessibility features for VLC Media Player, as improve navigation  or read status bar"),
 	# version
-	"addon_version" : "2.8",
+	"addon_version" : "2.9",
 	# Author(s)
 	"addon_author" : u"Javi Dominguez <fjavids@gmail.com>",
 	# URL for the add-on documentation support
