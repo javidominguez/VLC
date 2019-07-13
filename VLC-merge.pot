@@ -1,0 +1,108 @@
+#. TRANSLATORS: category for VLC input gestures
+#. TRANSLATORS: Settings panel title
+msgid "VLC"
+msgstr ""
+
+#. TRANSLATORS: The configuration option in NVDA Preferences menu
+msgid "Change VLC appModule settings"
+msgstr ""
+
+#. TRANSLATORS: message shown in Input gestures dialog for this script
+msgid ""
+"Use it in the main window if tabulating between playback controls stopped "
+"working. It'll tries to bring the focus to the playback control pane to get "
+"it to work again."
+msgstr ""
+
+#. TRANSLATORS: message shown in Input gestures dialog for this script
+msgid ""
+"Toggle verbosity: if enabled, it will announce the elapsed time and volume"
+msgstr ""
+
+#. TRANSLATORS: Expressing time, several hours, in plural. Maintain the space at the end to separate the next message that will be added.
+#, python-format
+msgid "%d hours "
+msgstr ""
+
+#. TRANSLATORS: Expressing time, one hour, in singular. Maintain the space at the end to separate the next message that will be added.
+#, python-format
+msgid "%d hour "
+msgstr ""
+
+#. TRANSLATORS: Expressing time, several minutes, in plural. Maintain the space at the end to separate the next message that will be added.
+#, python-format
+msgid "%s%d minutes "
+msgstr ""
+
+#. TRANSLATORS: Expressing time, one minute, in singular. Maintain the space at the end to separate the next message that will be added.
+#, python-format
+msgid "%s%d minute "
+msgstr ""
+
+#. TRANSLATORS: Expressing time, several seconds, in plural.
+#, python-format
+msgid "%s %d seconds"
+msgstr ""
+
+#. TRANSLATORS: Expressing time, one second, in singular.
+#, python-format
+msgid "%s %d second"
+msgstr ""
+
+#. Translators: As seen in the button Play/Pause of the interface
+msgid "Pause"
+msgstr ""
+
+#. TRANSLATORS: Message when there are no playback controls visible on screen, or the addon can't find them.
+msgid "There are no controls available"
+msgstr ""
+
+#. TRANSLATORS: Message when the playlist is empty and there is no track to play
+msgid "Empty"
+msgstr ""
+
+#. TRANSLATORS: elapsed time of total time
+#, python-format
+msgid "%s of %s"
+msgstr ""
+
+#. TRANSLATORS: When announces that a track is playing
+msgid " playing"
+msgstr ""
+
+#. TRANSLATORS: message shown in Input gestures dialog for this script
+msgid "Reads the status bar information"
+msgstr ""
+
+msgid "unchecked"
+msgstr ""
+
+msgid "Repeat mode"
+msgstr ""
+
+msgid "Shuffle mode"
+msgstr ""
+
+#, python-format
+msgid "Volume %s"
+msgstr ""
+
+#. TRANSLATORS: Settings dialog title
+msgid "VLC appModule settings"
+msgstr ""
+
+#. TRANSLATORS: Report time checkbox
+msgid "Announce elapsed time and volume"
+msgstr ""
+
+#. Add-on summary, usually the user visible name of the addon.
+#. Translators: Summary for this add-on to be shown on installation and add-on information.
+msgid "VLC Media Player"
+msgstr ""
+
+#. Add-on description
+#. Translators: Long description to be shown for this add-on on add-on information from add-ons manager
+msgid ""
+"Provides some accessibility features for VLC Media Player, as improve "
+"navigation  or read status bar"
+msgstr ""
