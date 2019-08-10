@@ -5,6 +5,7 @@
 #See the file COPYING.txt for more details.
 #Copyright (C) 2015-2018 Javi Dominguez <fjavids@gmail.com>
 
+from .py3compatibility import *
 import appModuleHandler
 import addonHandler
 from NVDAObjects.IAccessible import IAccessible, qt
@@ -32,7 +33,7 @@ import os.path
 import appModules
 appModules.__path__.insert(0, os.path.abspath(os.path.dirname(__file__)))
 try:
-	from qtEditableText import QTEditableText, SpecialAlphanumeric
+	from .qtEditableText import QTEditableText, SpecialAlphanumeric
 except:
 	from NVDAObjects.behaviors import EditableTextWithAutoSelectDetection as QTEditableText
 	SpecialAlphanumeric = {}
@@ -504,7 +505,10 @@ class VLC_pane(qt.LayeredPane):
 			while True:
 				if time() > timeout: break
 				try:
-					obj = rGen.next()
+					if py3flag:
+						obj = rGen.__next__()
+					else:
+						obj = rGen.next()
 				except StopIteration:
 					break
 				if obj.name and obj.role == controlTypes.ROLE_STATICTEXT and controlTypes.STATE_INVISIBLE not in obj.states and obj.next.role not in [
