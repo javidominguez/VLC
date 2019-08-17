@@ -2,7 +2,7 @@
 
 * Autor: Javi Dominguez
 * [Stabile Version herunterladen][2]
-* [Entwicklungsversion herunterladen][3]
+* [Entwicklerversion herunterladen][3]
 
 Diese Erweiterung stellt Funktionen zur Verbesserung der Zugänglichkeit für
 VLC media player zur Verfügung.

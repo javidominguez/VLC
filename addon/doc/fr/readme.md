@@ -4,8 +4,8 @@
 * Télécharger [version stable][2]
 * Télécharger [version de développement][3]
 
-Ce module complémentaire fournit des fonctionnalités d'accessibilité pour
-VLC Media Player.
+Cette extension fournit des fonctionnalités d'accessibilité pour VLC Media
+Player.
 
 1. Permet de naviguer à travers les contrôles de lecture à l'aide de Tab et
    Maj+Tab. Pour activer un contrôle sélectionné, appuyez sur Entrée.
@@ -23,10 +23,10 @@ VLC Media Player.
    lorsqu'ils sont affichés. Appuyez sur Contrôle+Tab pour essayer de les
    amener à l'avant.
 
-* Note importante : Ce module complémentaire est optimisé pour les versions
-  de VLC 3.0 et supérieures; cela ne fonctionnera pas correctement avec les
+* Note importante : Cette extension est optimisée pour les versions de VLC
+  3.0 et supérieures; cela ne fonctionnera pas correctement avec les
   versions antérieures. Pour utiliser VLC 2.x [téléchargez l'ancienne
-  version du module complémentaire.][1]
+  version de l'extension.][1]
 * Couvert par la licence publique générale GNU. Voir le [fichier
   COPYING.txt](https://github.com/javidominguez/VLC/blob/master/COPYING.txt)
   pour plus de détails.
