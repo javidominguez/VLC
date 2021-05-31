@@ -3,7 +3,7 @@
 # appModule for VLC Media Player 3X
 #This file is covered by the GNU General Public License.
 #See the file COPYING.txt for more details.
-#Copyright (C) 2015-2018 Javi Dominguez <fjavids@gmail.com>
+#Copyright (C) 2015-2021 Javi Dominguez <fjavids@gmail.com>
 
 from .py3compatibility import *
 import appModuleHandler
