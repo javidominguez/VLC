@@ -3,7 +3,7 @@
 # appModule for VLC Media Player 3X
 #This file is covered by the GNU General Public License.
 #See the file COPYING.txt for more details.
-#Copyright (C) 2015-2021 Javi Dominguez <fjavids@gmail.com>
+#Copyright (C) 2015-2018 Javi Dominguez <fjavids@gmail.com>
 
 from .py3compatibility import *
 import appModuleHandler
@@ -130,7 +130,7 @@ class AppModule(appModuleHandler.AppModule):
 			clsList.insert(0, VLC_Dialog)
 		if obj.role == controlTypes.ROLE_LISTITEM and obj.windowText == u'StandardPLPanelClassWindow':
 			clsList.insert(0, VLC_PlaylistItem)
-		if obj.role == controlTypes.ROLE_EDITABLETEXT and obj.windowClassName == u'Qt5QWindowIcon':
+		if obj.role == controlTypes.ROLE_EDITABLETEXT and (obj.windowClassName == u'Qt5QWindowIcon' or obj.simpleParent.role == 20): #@ dev: add edit bookmarks 
 			# obj.typeBuffer = ""
 			# obj.fakeCaret = len(obj.value)-1 if obj.value else 0
 			clsList.insert(0, VLC_EditableText)
@@ -235,6 +235,15 @@ class VLC_mainWindow(IAccessible):
 		# Add mute button
 		if controlTypes.STATE_INVISIBLE not in self.getChild(2).getChild(3).getChild(3).firstChild.states:
 			controls.append(self.getChild(2).getChild(3).getChild(3).firstChild)
+		#@ Dev: include bookmark button
+		fg = api.getForegroundObject()
+		try:
+			bt = fg.simpleNext.simpleNext
+		except:
+			bt = None
+		if bt:
+			controls.append(bt)
+			controls.append(bt.next.next)
 		return controls
 
 	def _get_volumeDisplay(self):
@@ -359,24 +368,26 @@ class VLC_mainWindow(IAccessible):
 		if config.conf['VLC']['reportTimeWhenTrackSlips']: self.sayElapsedTime()
 
 	def script_readStatusBar(self, gesture):
+		messages = []
 		if self.getChild(1).role == controlTypes.ROLE_STATUSBAR:
 			try:
 				if not self.getChild(1).getChild(1).name:
 					#TRANSLATORS: Message when the playlist is empty and there is no track to play
-					ui.message(_("Empty"))
+					messages.append(_("Empty"))
 					return
-				ui.message("%s " % self.getChild(1).getChild(1).name)
+				messages.append("%s " % self.getChild(1).getChild(1).name)
 				elapsedTime, totalTime = self.getChild(1).getChild(3).name.split("/")
 				elapsedTime = self.composeTime(elapsedTime)
 				totalTime = self.composeTime(totalTime)
 				#TRANSLATORS: elapsed time of total time
-				ui.message(_("%s of %s") % (elapsedTime, totalTime))
+				messages.append(_("%s of %s") % (elapsedTime, totalTime))
 				if self.isPlaying():
 					#TRANSLATORS: When announces that a track is playing
-					ui.message(_(" playing"))
-				ui.message(", ".join(
+					messages.append(_(" playing"))
+				messages.append(", ".join(
 				["%s %s" % (o.description, controlTypes.stateLabels[controlTypes.STATE_CHECKED]) for o in\
 				filter(lambda o: o.role == controlTypes.ROLE_CHECKBOX and controlTypes.STATE_CHECKED in o.states, self.playbackControls)]))
+				ui.message("; ".join(messages))
 			except:
 				pass
 	#TRANSLATORS: message shown in Input gestures dialog for this script
