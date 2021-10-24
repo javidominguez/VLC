@@ -11,6 +11,14 @@ import addonHandler
 from NVDAObjects.IAccessible import IAccessible, qt
 from NVDAObjects.behaviors import 	Dialog
 import controlTypes
+# controlTypes module compatibility with old versions of NVDA
+if not hasattr(controlTypes, "Role"):
+	setattr(controlTypes, "Role", type('Enum', (), dict(
+	[(x.split("ROLE_")[1], getattr(controlTypes, x)) for x in dir(controlTypes) if x.startswith("ROLE_")])))
+if not hasattr(controlTypes, "State"):
+	setattr(controlTypes, "State", type('Enum', (), dict(
+	[(x.split("STATE_")[1], getattr(controlTypes, x)) for x in dir(controlTypes) if x.startswith("STATE_")])))
+# End of compatibility fixes
 import api
 import winUser
 import ui
@@ -81,31 +89,31 @@ class AppModule(appModuleHandler.AppModule):
 		gui.mainFrame._popupSettingsDialog(VLCSettings)
 
 	def chooseNVDAObjectOverlayClasses(self, obj, clsList):
-		if obj.role == controlTypes.ROLE_APPLICATION:
+		if obj.role == controlTypes.Role.APPLICATION:
 			obj.parent = api.getDesktopObject()
 			clsList.insert(0, VLC_application)
 		if obj.windowClassName == u'Qt5QWindowIcon':
-			if obj.role == controlTypes.ROLE_BORDER or obj.role == controlTypes.ROLE_PANE:
+			if obj.role == controlTypes.Role.BORDER or obj.role == controlTypes.Role.PANE:
 				if obj.childCount == 3:
-					if obj.lastChild.role == controlTypes.ROLE_STATICTEXT:
-						obj.role = controlTypes.ROLE_STATUSBAR
+					if obj.lastChild.role == controlTypes.Role.STATICTEXT:
+						obj.role = controlTypes.Role.STATUSBAR
 						clsList.insert(0, VLC_StatusBar)
 					elif obj.lastChild and obj.lastChild.firstChild and obj.lastChild.firstChild.firstChild\
-					and obj.lastChild.firstChild.firstChild.role == controlTypes.ROLE_MENUBUTTON:
-						obj.role = controlTypes.ROLE_PANEL
+					and obj.lastChild.firstChild.firstChild.role == controlTypes.Role.MENUBUTTON:
+						obj.role = controlTypes.Role.PANEL
 						#TRANSLATORS: Title of the panel that contains the playlist when it is inside main window
 						obj.name = _("Playlist")
 						obj.isPresentableFocusAncestor = False
 						clsList.insert(0, VLC_AnchoredPlaylist)
 				else:
-					obj.role = controlTypes.ROLE_LAYEREDPANE
+					obj.role = controlTypes.Role.LAYEREDPANE
 					if obj.windowText in self.embeddedWindows:
 						obj.name = self.embeddedWindows[obj.windowText]
 					elif api.getForegroundObject() and api.getForegroundObject().name and obj.windowText != api.getForegroundObject().name:
 						obj.description = obj.windowText
 					clsList.insert(0, VLC_pane)
-			elif obj.role == controlTypes.ROLE_WINDOW:
-				if obj.firstChild and obj.firstChild.role == controlTypes.ROLE_MENUBAR:
+			elif obj.role == controlTypes.Role.WINDOW:
+				if obj.firstChild and obj.firstChild.role == controlTypes.Role.MENUBAR:
 					clsList.insert(0, VLC_mainWindow)
 				elif obj.windowStyle == 1442840576:
 					if obj.windowText in self.embeddedWindows:
@@ -120,17 +128,17 @@ class AppModule(appModuleHandler.AppModule):
 				except AttributeError:
 					pass
 				else:
-					if container and container.name and container.role == controlTypes.ROLE_LAYEREDPANE:
-						if obj.previous and obj.previous.role == controlTypes.ROLE_STATICTEXT:
+					if container and container.name and container.role == controlTypes.Role.LAYEREDPANE:
+						if obj.previous and obj.previous.role == controlTypes.Role.STATICTEXT:
 							obj.name = obj.previous.name 
 						clsList.insert(0, VLC_mediaInfo)
-		if obj.role == controlTypes.ROLE_SPINBUTTON:
+		if obj.role == controlTypes.Role.SPINBUTTON:
 			clsList.insert(0, VLC_spinButton)
-		if obj.role == controlTypes.ROLE_DIALOG and (obj.windowClassName == u'Qt5QWindowToolSaveBits' or obj.windowClassName == u'Qt5QWindowIcon'):
+		if obj.role == controlTypes.Role.DIALOG and (obj.windowClassName == u'Qt5QWindowToolSaveBits' or obj.windowClassName == u'Qt5QWindowIcon'):
 			clsList.insert(0, VLC_Dialog)
-		if obj.role == controlTypes.ROLE_LISTITEM and obj.windowText == u'StandardPLPanelClassWindow':
+		if obj.role == controlTypes.Role.LISTITEM and obj.windowText == u'StandardPLPanelClassWindow':
 			clsList.insert(0, VLC_PlaylistItem)
-		if obj.role == controlTypes.ROLE_EDITABLETEXT and (obj.windowClassName == u'Qt5QWindowIcon' or obj.simpleParent.role == 20): #@ dev: add edit bookmarks 
+		if obj.role == controlTypes.Role.EDITABLETEXT and (obj.windowClassName == u'Qt5QWindowIcon' or obj.simpleParent.role == 20): #@ dev: add edit bookmarks 
 			# obj.typeBuffer = ""
 			# obj.fakeCaret = len(obj.value)-1 if obj.value else 0
 			clsList.insert(0, VLC_EditableText)
@@ -139,16 +147,16 @@ class AppModule(appModuleHandler.AppModule):
 
 	def event_foreground(self, obj, nextHandler):
 		appWindow = api.getForegroundObject().parent
-		if appWindow.role == controlTypes.ROLE_APPLICATION:
+		if appWindow.role == controlTypes.Role.APPLICATION:
 			api.setFocusObject(appWindow)
 		nextHandler()
 
 	def event_gainFocus(self, obj, nextHandler):
-		if obj.role == controlTypes.ROLE_MENUBAR and hasattr(obj.parent, "playbackControls"):
+		if obj.role == controlTypes.Role.MENUBAR and hasattr(obj.parent, "playbackControls"):
 			api.setFocusObject(obj.parent)
-		elif (obj.role == controlTypes.ROLE_MENUITEM and obj.parent.parent.windowClassName == u'#32768') or (obj.role == controlTypes.ROLE_POPUPMENU and obj.parent.windowClassName == u'#32768'):
+		elif (obj.role == controlTypes.Role.MENUITEM and obj.parent.parent.windowClassName == u'#32768') or (obj.role == controlTypes.Role.POPUPMENU and obj.parent.windowClassName == u'#32768'):
 			api.setFocusObject(obj)
-		if controlTypes.STATE_INVISIBLE in obj.states:
+		if controlTypes.State.INVISIBLE in obj.states:
 			obj = api.getForegroundObject()
 			obj.setFocus()
 		elif obj.description and "<html>" in obj.description:
@@ -187,12 +195,12 @@ class AppModule(appModuleHandler.AppModule):
 		focused = api.getFocusObject()
 		# A menuitem from VLC_MainWindow that should let go the focus but keeps it
 		if hasattr(fg, "playbackControls")\
-		and focused.role == controlTypes.ROLE_MENUITEM\
-		and controlTypes.STATE_FOCUSED not in focused.states:
+		and focused.role == controlTypes.Role.MENUITEM\
+		and controlTypes.State.FOCUSED not in focused.states:
 			# If it is an item in a submenu
-			if focused.parent.role == controlTypes.ROLE_POPUPMENU\
-			and focused.parent.parent.role == controlTypes.ROLE_MENUITEM\
-			and focused.simpleParent.simpleParent.role != controlTypes.ROLE_MENUBAR:
+			if focused.parent.role == controlTypes.Role.POPUPMENU\
+			and focused.parent.parent.role == controlTypes.Role.MENUITEM\
+			and focused.simpleParent.simpleParent.role != controlTypes.Role.MENUBAR:
 				# Return to parent menu
 				api.setFocusObject(focused.simpleParent)
 				focused.simpleParent.reportFocus()
@@ -227,13 +235,13 @@ class VLC_mainWindow(IAccessible):
 
 	def _get_playbackControls(self):
 		controls = filter(lambda c: c.role not in [
-		controlTypes.ROLE_GRIP, controlTypes.ROLE_BORDER, controlTypes.ROLE_LAYEREDPANE],
+		controlTypes.Role.GRIP, controlTypes.Role.BORDER, controlTypes.Role.LAYEREDPANE],
 		self.getChild(2).getChild(3).children+\
 		self.getChild(2).getChild(3).firstChild.children+\
 		self.getChild(2).getChild(3).getChild(1).children+\
 		list(self.getChild(2).getChild(3).getChild(2).recursiveDescendants))
 		# Add mute button
-		if controlTypes.STATE_INVISIBLE not in self.getChild(2).getChild(3).getChild(3).firstChild.states:
+		if controlTypes.State.INVISIBLE not in self.getChild(2).getChild(3).getChild(3).firstChild.states:
 			controls.append(self.getChild(2).getChild(3).getChild(3).firstChild)
 		#@ Dev: include bookmark button
 		fg = api.getForegroundObject()
@@ -257,13 +265,13 @@ class VLC_mainWindow(IAccessible):
 		try:
 			# Search box in anchored playlist
 			searchBox = self.getChild(2).getChild(1).getChild(2).getChild(2)
-			return searchBox if searchBox.role == controlTypes.ROLE_EDITABLETEXT and controlTypes.STATE_INVISIBLE not in searchBox.states else None
+			return searchBox if searchBox.role == controlTypes.Role.EDITABLETEXT and controlTypes.State.INVISIBLE not in searchBox.states else None
 		except:
 			pass
 		try:
 			# SplitButton in anchored playlist
 			splitButton = self.getChild(2).getChild(1).getChild(1).getChild(3)
-			return splitButton if splitButton.role == controlTypes.ROLE_SPLITBUTTON and controlTypes.STATE_INVISIBLE not in splitButton.states else None
+			return splitButton if splitButton.role == controlTypes.Role.SPLITBUTTON and controlTypes.State.INVISIBLE not in splitButton.states else None
 		except:
 			pass
 		return None
@@ -326,7 +334,7 @@ class VLC_mainWindow(IAccessible):
 		">Looks if is checked: c=1=Shuffle and c=2=Repeat"
 		obj = api.getForegroundObject()
 		try:
-			if controlTypes.STATE_CHECKED in obj.getChild(2).getChild(3).children[3:][-c].states:
+			if controlTypes.State.CHECKED in obj.getChild(2).getChild(3).children[3:][-c].states:
 				return(True)
 		except:
 			pass
@@ -337,7 +345,7 @@ class VLC_mainWindow(IAccessible):
 		ui.message(self.composeTime(elapsedTime))
 
 	def moveToItem(self, index):
-		toolPaneItems = filter(lambda item: controlTypes.STATE_INVISIBLE not in item.states and controlTypes.STATE_UNAVAILABLE not in item.states, self.playbackControls)
+		toolPaneItems = filter(lambda item: controlTypes.State.INVISIBLE not in item.states and controlTypes.State.UNAVAILABLE not in item.states, self.playbackControls)
 		if len(toolPaneItems) == 0:
 			#TRANSLATORS: Message when there are no playback controls visible on screen, or the addon can't find them.
 			ui.message(_("There are no controls available"))
@@ -369,7 +377,7 @@ class VLC_mainWindow(IAccessible):
 
 	def script_readStatusBar(self, gesture):
 		messages = []
-		if self.getChild(1).role == controlTypes.ROLE_STATUSBAR:
+		if self.getChild(1).role == controlTypes.Role.STATUSBAR:
 			try:
 				if not self.getChild(1).getChild(1).name:
 					#TRANSLATORS: Message when the playlist is empty and there is no track to play
@@ -385,8 +393,8 @@ class VLC_mainWindow(IAccessible):
 					#TRANSLATORS: When announces that a track is playing
 					messages.append(_(" playing"))
 				messages.append(", ".join(
-				["%s %s" % (o.description, controlTypes.stateLabels[controlTypes.STATE_CHECKED]) for o in\
-				filter(lambda o: o.role == controlTypes.ROLE_CHECKBOX and controlTypes.STATE_CHECKED in o.states, self.playbackControls)]))
+				["%s %s" % (o.description, controlTypes.stateLabels[controlTypes.State.CHECKED]) for o in\
+				filter(lambda o: o.role == controlTypes.Role.CHECKBOX and controlTypes.State.CHECKED in o.states, self.playbackControls)]))
 				ui.message("; ".join(messages))
 			except:
 				pass
@@ -402,7 +410,7 @@ class VLC_mainWindow(IAccessible):
 			obj.doAction()
 			for state in obj.states:
 				ui.message(controlTypes.stateLabels[state])
-			if obj.role == controlTypes.ROLE_CHECKBOX and controlTypes.STATE_CHECKED not in obj.states:
+			if obj.role == controlTypes.Role.CHECKBOX and controlTypes.State.CHECKED not in obj.states:
 				ui.message(_("unchecked"))
 		except:
 			api.moveMouseToNVDAObject(obj)
@@ -414,7 +422,7 @@ class VLC_mainWindow(IAccessible):
 		self.focusDialog()
 
 	def mouseClick(self, button="left"):
-		if controlTypes.STATE_INVISIBLE in api.getMouseObject().states:
+		if controlTypes.State.INVISIBLE in api.getMouseObject().states:
 			return(False)
 		if button == "left":
 			winUser.mouse_event(winUser.MOUSEEVENTF_LEFTDOWN,0,0,None,None)
@@ -430,7 +438,7 @@ class VLC_mainWindow(IAccessible):
 		if hasattr(fg, "playbackControls"):
 			obj = fg.simpleNext
 			while obj:
-				if controlTypes.STATE_INVISIBLE not in obj.states:
+				if controlTypes.State.INVISIBLE not in obj.states:
 					return obj
 				obj = obj.simpleNext
 		return None
@@ -448,7 +456,7 @@ class VLC_mainWindow(IAccessible):
 		gesture.send()
 		sleep(0.1)
 		if self.isChecked(2):
-			ui.message(controlTypes.stateLabels[controlTypes.STATE_CHECKED])
+			ui.message(controlTypes.stateLabels[controlTypes.State.CHECKED])
 		else:
 			ui.message(_("unchecked"))
 
@@ -457,7 +465,7 @@ class VLC_mainWindow(IAccessible):
 		gesture.send()
 		sleep(0.1)
 		if self.isChecked(1):
-			ui.message(controlTypes.stateLabels[controlTypes.STATE_CHECKED])
+			ui.message(controlTypes.stateLabels[controlTypes.State.CHECKED])
 		else:
 			ui.message(_("unchecked"))
 
@@ -501,7 +509,7 @@ class VLC_mainWindow(IAccessible):
 class VLC_pane(qt.LayeredPane):
 
 	def event_gainFocus(self):
-		if self.simpleParent.role == controlTypes.ROLE_PANEL:
+		if self.simpleParent.role == controlTypes.Role.PANEL:
 			# This panel often retains the focus when it receive it and it is necessary to bring it to the playback window.
 			fg = api.getForegroundObject()
 			if hasattr(fg, "playbackControls"):
@@ -522,14 +530,14 @@ class VLC_pane(qt.LayeredPane):
 						obj = rGen.next()
 				except StopIteration:
 					break
-				if obj.name and obj.role == controlTypes.ROLE_STATICTEXT and controlTypes.STATE_INVISIBLE not in obj.states and obj.next.role not in [
-				controlTypes.ROLE_EDITABLETEXT,
-				controlTypes.ROLE_COMBOBOX,
-				controlTypes.ROLE_SPINBUTTON]:
+				if obj.name and obj.role == controlTypes.Role.STATICTEXT and controlTypes.State.INVISIBLE not in obj.states and obj.next.role not in [
+				controlTypes.Role.EDITABLETEXT,
+				controlTypes.Role.COMBOBOX,
+				controlTypes.Role.SPINBUTTON]:
 					ui.message(obj.name)
 
 	def event_focusEntered(self):
-		if self.simpleParent.role == controlTypes.ROLE_PANEL:
+		if self.simpleParent.role == controlTypes.Role.PANEL:
 			# Announces the anchored playlist
 			speakObject(self.simpleParent)
 			self.appModule.anchoredPlaylist = True
@@ -545,14 +553,14 @@ class VLC_spinButton(IAccessible):
 class VLC_mediaInfo(IAccessible):
 
 	def script_nextControl(self, gesture):
-		if self.role == controlTypes.ROLE_EDITABLETEXT\
+		if self.role == controlTypes.Role.EDITABLETEXT\
 		and not self.next:
 			self.parent.getChild(1).doAction()
 		else:
 			gesture.send()
 
 	def script_previousControl(self, gesture):
-		if self.role == controlTypes.ROLE_EDITABLETEXT\
+		if self.role == controlTypes.Role.EDITABLETEXT\
 		and not self.next:
 			self.simplePrevious.simplePrevious.doAction()
 		else:
@@ -575,7 +583,7 @@ class VLC_PlaylistItem(IAccessible):
 		self.selectItem(self.simplePrevious)
 
 	def selectItem(self, item):
-		if item and item.role == controlTypes.ROLE_LISTITEM:
+		if item and item.role == controlTypes.Role.LISTITEM:
 			item.scrollIntoView()
 			api.setNavigatorObject(item)
 			api.moveMouseToNVDAObject(item)
