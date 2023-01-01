@@ -138,12 +138,8 @@ class AppModule(appModuleHandler.AppModule):
 			clsList.insert(0, VLC_Dialog)
 		if obj.role == controlTypes.Role.LISTITEM and obj.windowText == u'StandardPLPanelClassWindow':
 			clsList.insert(0, VLC_PlaylistItem)
-		if obj.role == controlTypes.Role.EDITABLETEXT and (obj.windowClassName == u'Qt5QWindowIcon' or obj.simpleParent.role == 20): #@ dev: add edit bookmarks 
-			# obj.typeBuffer = ""
-			# obj.fakeCaret = len(obj.value)-1 if obj.value else 0
+		if obj.role == controlTypes.Role.EDITABLETEXT and obj.parent.__class__ == VLC_pane:
 			clsList.insert(0, VLC_EditableText)
-			
-
 
 	def event_foreground(self, obj, nextHandler):
 		appWindow = api.getForegroundObject().parent
