@@ -23,9 +23,10 @@ import api
 import winUser
 import ui
 import globalVars
-from speech import speakObject
+from speech import speakObject, SpeechMode
 import tones
 from time import sleep, time
+from scriptHandler import script
 import textInfos
 import re
 import gui
@@ -59,6 +60,8 @@ class AppModule(appModuleHandler.AppModule):
 
 	#TRANSLATORS: category for VLC input gestures
 	scriptCategory = _("VLC")
+
+	speechOnDemand = {"speakOnDemand": True} if hasattr(SpeechMode, "onDemand") else {}
 
 	def __init__(self, *args, **kwargs):
 		super(AppModule, self).__init__(*args, **kwargs)
@@ -229,6 +232,8 @@ class VLC_mainWindow(IAccessible):
 	#TRANSLATORS: category for VLC input gestures
 	scriptCategory = _("VLC")
 
+	speechOnDemand = {"speakOnDemand": True} if hasattr(SpeechMode, "onDemand") else {}
+
 	def _get_playbackControls(self):
 		controls = filter(lambda c: c.role not in [
 		controlTypes.Role.GRIP, controlTypes.Role.BORDER, controlTypes.Role.LAYEREDPANE],
@@ -367,10 +372,12 @@ class VLC_mainWindow(IAccessible):
 		except:
 			gesture.send()
 
+	@script(**speechOnDemand)
 	def script_backAndForward(self, gesture):
 		gesture.send()
 		if config.conf['VLC']['reportTimeWhenTrackSlips']: self.sayElapsedTime()
 
+	@script(**speechOnDemand)
 	def script_readStatusBar(self, gesture):
 		messages = []
 		if self.getChild(1).role == controlTypes.Role.STATUSBAR:
@@ -465,6 +472,7 @@ class VLC_mainWindow(IAccessible):
 		else:
 			ui.message(_("unchecked"))
 
+	@script(**speechOnDemand)
 	def script_sayVolume(self, gesture):
 		gesture.send()
 		if self.volumeDisplay.value and config.conf['VLC']['reportTimeWhenTrackSlips']: ui.message(_("Volume %s") % self.volumeDisplay.value)
