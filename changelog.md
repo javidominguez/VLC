@@ -1,0 +1,1 @@
+Tested in NVDA 2025.1 it works OK.
