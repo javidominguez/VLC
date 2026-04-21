@@ -428,12 +428,12 @@ class VLC_mainWindow(IAccessible):
 		if controlTypes.State.INVISIBLE in api.getMouseObject().states:
 			return(False)
 		if button == "left":
-			winUser.mouse_event(winUser.MOUSEEVENTF_LEFTDOWN,0,0,None,None)
-			winUser.mouse_event(winUser.MOUSEEVENTF_LEFTUP,0,0,None,None)
+			winUser.mouse_event(winUser.MOUSEEVENTF_LEFTDOWN,0,0,0,0)
+			winUser.mouse_event(winUser.MOUSEEVENTF_LEFTUP,0,0,0,0)
 			return(True)
 		if button == "right":
-			winUser.mouse_event(winUser.MOUSEEVENTF_RIGHTDOWN,0,0,None,None)
-			winUser.mouse_event(winUser.MOUSEEVENTF_RIGHTUP,0,0,None,None)
+			winUser.mouse_event(winUser.MOUSEEVENTF_RIGHTDOWN,0,0,0,0)
+			winUser.mouse_event(winUser.MOUSEEVENTF_RIGHTUP,0,0,0,0)
 			return(True)
 
 	def getDialog(self):
@@ -593,8 +593,8 @@ class VLC_PlaylistItem(IAccessible):
 			api.moveMouseToNVDAObject(item)
 			x, y = winUser.getCursorPos()
 			if api.getDesktopObject().objectFromPoint(x,y) == item:
-				winUser.mouse_event(winUser.MOUSEEVENTF_LEFTDOWN,0,0,None,None)
-				winUser.mouse_event(winUser.MOUSEEVENTF_LEFTUP,0,0,None,None)
+				winUser.mouse_event(winUser.MOUSEEVENTF_LEFTDOWN,0,0,0,0)
+				winUser.mouse_event(winUser.MOUSEEVENTF_LEFTUP,0,0,0,0)
 				item.setFocus()
 				api.setFocusObject(item)
 				if item.name: ui.message(item.name)
