@@ -7,97 +7,217 @@ msgid ""
 msgstr ""
 "Project-Id-Version: vlc 1.0\n"
 "Report-Msgid-Bugs-To: nvda-translations@freelists.org\n"
-"POT-Creation-Date: 2015-10-30 22:00+1000\n"
-"PO-Revision-Date: 2018-06-24 22:15+0200\n"
-"Last-Translator: René Linke <rene.linke@hamburg.de>\n"
+"POT-Creation-Date: 2026-07-05 20:22+0200\n"
+"PO-Revision-Date: 2026-07-05 21:16+0200\n"
+"Last-Translator: Karl Eick <hozosch@web.de>\n"
 "Language-Team: \n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.0.8\n"
+"X-Generator: Poedit 3.9\n"
+"X-Poedit-Basepath: ../../../appModules\n"
+"X-Poedit-SearchPath-0: .\n"
 
+#: qtEditableText/__init__.py:75 qtEditableText/__init__.py:103
+#: qtEditableText/__init__.py:136 qtEditableText/__init__.py:161
+#: qtEditableText/__init__.py:197 qtEditableText/__init__.py:210
+#: qtEditableText/__init__.py:258 qtEditableText/__init__.py:316
+#: qtEditableText/__init__.py:381
+msgid "selected"
+msgstr "Ausgewählt"
+
+#: qtEditableText/__init__.py:77 qtEditableText/__init__.py:105
+#: qtEditableText/__init__.py:138 qtEditableText/__init__.py:163
+#: qtEditableText/__init__.py:200 qtEditableText/__init__.py:207
+#: qtEditableText/__init__.py:260 qtEditableText/__init__.py:318
+msgid "deselected"
+msgstr "Abgewählt"
+
+#: qtEditableText/__init__.py:218 qtEditableText/__init__.py:223
+#: qtEditableText/__init__.py:240
+msgid "selection removed"
+msgstr "Auswahl entfernt"
+
+#. TRANSLATORS: category for VLC input gestures
+#. TRANSLATORS: Settings panel title
+#: vlc.py:62 vlc.py:233 vlc.py:639
+msgid "VLC"
+msgstr "VLC"
+
+#. TRANSLATORS: Window or panel that contains the playlist when it is inside main window
+#. TRANSLATORS: Title of the panel that contains the playlist when it is inside main window
+#: vlc.py:72 vlc.py:108
+msgid "Playlist"
+msgstr "Wiedergabeliste"
+
+#. TRANSLATORS: The configuration option in NVDA Preferences menu
+#: vlc.py:79
+msgid "Change VLC appModule settings"
+msgstr "Einstellungen des VLC-Anwendungsmoduls ändern"
+
+#. TRANSLATORS: message shown in Input gestures dialog for this script
+#: vlc.py:181
+msgid ""
+"Use it in the main window if tabulating between playback controls stopped "
+"working. It'll tries to bring the focus to the playback control pane to get "
+"it to work again."
+msgstr ""
+"Verwenden Sie diese Tastenkombination im Hauptfenster, wenn das Tabulieren "
+"zwischen den Wiedergabesteuerelementen nicht mehr funktioniert. Es wird "
+"versucht, den Fokus auf den Bereich mit den Wiedergabesteuerelementen zu "
+"setzen, damit es wieder funktioniert."
+
+#. TRANSLATORS: message shown in Input gestures dialog for this script
+#: vlc.py:189
+msgid ""
+"Toggle verbosity: if enabled, it will announce the elapsed time and volume"
+msgstr ""
+"Ausführlichkeit umschalten. Wenn eingeschaltet, werden Lautstärkke und "
+"verstrichene Zeit angekündigt"
+
+#. TRANSLATORS: Expressing time, several hours, in plural. Maintain the space at the end to separate the next message that will be added.
+#: vlc.py:300
 #, python-format
 msgid "%d hours "
 msgstr "%d Stunden "
 
+#. TRANSLATORS: Expressing time, one hour, in singular. Maintain the space at the end to separate the next message that will be added.
+#: vlc.py:303
 #, python-format
 msgid "%d hour "
 msgstr "%d Stunde "
 
+#. TRANSLATORS: Expressing time, several minutes, in plural. Maintain the space at the end to separate the next message that will be added.
+#: vlc.py:315
 #, python-format
 msgid "%s%d minutes "
-msgstr "%s%d Minuten"
+msgstr "%s%d Minuten "
 
+#. TRANSLATORS: Expressing time, one minute, in singular. Maintain the space at the end to separate the next message that will be added.
+#: vlc.py:318
 #, python-format
 msgid "%s%d minute "
 msgstr "%s%d Minute "
 
+#. TRANSLATORS: Expressing time, several seconds, in plural.
+#: vlc.py:321
 #, python-format
 msgid "%s %d seconds"
 msgstr "%s %d Sekunden"
 
+#. TRANSLATORS: Expressing time, one second, in singular.
+#: vlc.py:324
 #, python-format
 msgid "%s %d second"
 msgstr "%s %d Sekunde"
 
+#: vlc.py:330
+msgid "Pause"
+msgstr "Pause"
+
+#. TRANSLATORS: Message when there are no playback controls visible on screen, or the addon can't find them.
+#: vlc.py:352
 msgid "There are no controls available"
-msgstr "Keine Steuerungen verfügbar."
+msgstr "Keine Steuerungen verfügbar"
 
-msgid "checked"
-msgstr "Aktiviert"
+#. TRANSLATORS: Message when the playlist is empty and there is no track to play
+#: vlc.py:387
+msgid "Empty"
+msgstr "Leer"
 
-msgid "not checked"
-msgstr "Nicht aktiviert"
-
-msgid "unavailable"
-msgstr "Nicht verfügbar"
-
+#. TRANSLATORS: elapsed time of total time
+#: vlc.py:394
 #, python-format
 msgid "%s of %s"
 msgstr "%s von %s"
 
+#. TRANSLATORS: When announces that a track is playing
+#: vlc.py:397
 msgid " playing"
 msgstr " läuft"
 
+#. TRANSLATORS: message shown in Input gestures dialog for this script
+#: vlc.py:405
+msgid "Reads the information of the current playback."
+msgstr "Liest Informationen zur aktuellen Wiedergabe."
+
+#: vlc.py:417 vlc.py:464 vlc.py:473
+msgid "unchecked"
+msgstr "deaktiviert"
+
+#: vlc.py:458
 msgid "Repeat mode"
 msgstr "Wiederholungsmodus"
 
+#: vlc.py:467
 msgid "Shuffle mode"
 msgstr "Zufallsmodus"
 
+#: vlc.py:478
 #, python-format
-msgid "%d items in playlist"
-msgstr "%d Elemente in der Wiedergabeliste"
+msgid "Volume %s"
+msgstr "Lautstärke %s"
 
-msgid "Playlist is not visible"
-msgstr "Die Wiedergabeliste ist nicht sichtbar"
-
-msgid "This item is outside the window"
-msgstr "Dieser Eintrag ist außerhalb des Fensters."
-
-msgid "Checked"
-msgstr "Aktiviert"
-
-msgid "edit"
-msgstr "Eingabefeld"
-
-msgid "button"
-msgstr "Schalter"
-
-msgid "tab control"
-msgstr "Registerkarte"
-
-#. Add-on summary, usually the user visible name of the addon.
-#. Translators: Summary for this add-on to be shown on installation and add-on information.
-msgid "VLC Media Player"
-msgstr "VLC Media Player"
-
-#. Add-on description
-#. Translators: Long description to be shown for this add-on on add-on information from add-ons manager
+#. TRANSLATORS: message shown in Input gestures dialog for this script
+#: vlc.py:487
 msgid ""
-"It provides some accessibility features for VLC Media Player, as improve "
-"navigation  or read status bar"
+"Brings panels or dialogs that are displayed on the screen, but NVDA is "
+"unable to focus automatically to the fore."
 msgstr ""
-"Es bietet eine verbesserte Zugänglichkeit in der Navigation im VLC Media "
-"Player und das Auslesen der Statuszeile."
+"Bringt Fenster oder Dialogfelder in den Vordergrund, die auf dem Bildschirm "
+"angezeigt werden, aber auf die NVDA den Fokus nicht automatisch setzen kann."
+
+#. TRANSLATORS: To successfully synchronize the cursor when it is moved by words, it is necessary to distinguish the alphanumeric characters of the punctuation signs.
+#. TRANSLATORS: This string should not be translated literally. Should be a list of the special characters that are considered to be alphanumeric in your local alphabet, for example the ñ in Spanish.
+#: vlc.py:619
+msgid "SpecialAlphanumericCharactersInYourLanguage"
+msgstr "ÄÖÜẞäöüß"
+
+#. TRANSLATORS: Settings dialog title
+#: vlc.py:623
+msgid "VLC appModule settings"
+msgstr "Einstellungen des VLC-Anwendungsmoduls"
+
+#. TRANSLATORS: Report time checkbox
+#: vlc.py:626 vlc.py:642
+msgid "Announce elapsed time and volume"
+msgstr "Lautstärke und verstrichene Zeit lesen"
+
+#~ msgid "not checked"
+#~ msgstr "Nicht aktiviert"
+
+#~ msgid "unavailable"
+#~ msgstr "Nicht verfügbar"
+
+#, python-format
+#~ msgid "%d items in playlist"
+#~ msgstr "%d Elemente in der Wiedergabeliste"
+
+#~ msgid "Playlist is not visible"
+#~ msgstr "Die Wiedergabeliste ist nicht sichtbar"
+
+#~ msgid "This item is outside the window"
+#~ msgstr "Dieser Eintrag ist außerhalb des Fensters"
+
+#~ msgid "Checked"
+#~ msgstr "Aktiviert"
+
+#~ msgid "edit"
+#~ msgstr "Eingabefeld"
+
+#~ msgid "button"
+#~ msgstr "Schalter"
+
+#~ msgid "tab control"
+#~ msgstr "Registerkarte"
+
+#~ msgid "VLC Media Player"
+#~ msgstr "VLC Media Player"
+
+#~ msgid ""
+#~ "It provides some accessibility features for VLC Media Player, as improve "
+#~ "navigation  or read status bar"
+#~ msgstr ""
+#~ "Es bietet eine verbesserte Zugänglichkeit in der Navigation im VLC Media "
+#~ "Player und das Auslesen der Statuszeile"

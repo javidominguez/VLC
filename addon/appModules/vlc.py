@@ -145,22 +145,33 @@ class AppModule(appModuleHandler.AppModule):
 			clsList.insert(0, VLC_EditableText)
 
 	def event_foreground(self, obj, nextHandler):
+		# Standard focus logic
 		appWindow = api.getForegroundObject().parent
 		if appWindow.role == controlTypes.Role.APPLICATION:
 			api.setFocusObject(appWindow)
+
+		# Proactive Caching: Trigger the search as soon as VLC comes to foreground
+		# We check if the foreground object is our main window
+		fg = api.getForegroundObject()
+		if isinstance(fg, VLC_mainWindow):
+			# Clear and pre-fill the cache immediately in the background
+			if hasattr(fg, '_cached_controls'):
+				fg.__dict__.pop('_cached_controls', None)
+			# Small trick: just accessing the property starts the search
+			wx.CallAfter(lambda: getattr(fg, 'playbackControls', None))
+
 		nextHandler()
 
 	def event_gainFocus(self, obj, nextHandler):
 		if obj.role == controlTypes.Role.MENUBAR and hasattr(obj.parent, "playbackControls"):
 			api.setFocusObject(obj.parent)
-		elif (obj.role == controlTypes.Role.MENUITEM and obj.parent.parent.windowClassName == u'#32768') or (obj.role == controlTypes.Role.POPUPMENU and obj.parent.windowClassName == u'#32768'):
-			api.setFocusObject(obj)
-		if controlTypes.State.INVISIBLE in obj.states:
-			obj = api.getForegroundObject()
-			obj.setFocus()
-		elif obj.description and "<html>" in obj.description:
-			# Removes the HTML tags that appear in the description of some objects
-			while re.search("<[^(>.*<)]+>([^<]*</style>)?", obj.description): obj.description = obj.description.replace(re.search("<[^(>.*<)]+>([^<]*</style>)?", obj.description).group(), "")
+
+		# Sanitize descriptions: Remove HTML tags often found in VLC tooltips
+		if obj.description and "<" in obj.description:
+			# Non-greedy regex to strip all HTML tags
+			clean_desc = re.sub(r'<[^>]+>', '', obj.description)
+			obj.description = clean_desc.strip()
+
 		nextHandler()
 
 	def event_becomeNavigatorObject(self, obj, nextHandler, *args, **kwargs):
@@ -235,25 +246,49 @@ class VLC_mainWindow(IAccessible):
 	speechOnDemand = {"speakOnDemand": True} if hasattr(SpeechMode, "onDemand") else {}
 
 	def _get_playbackControls(self):
-		controls = filter(lambda c: c.role not in [
-		controlTypes.Role.GRIP, controlTypes.Role.BORDER, controlTypes.Role.LAYEREDPANE],
-		self.getChild(2).getChild(3).children+\
-		self.getChild(2).getChild(3).firstChild.children+\
-		self.getChild(2).getChild(3).getChild(1).children+\
-		list(self.getChild(2).getChild(3).getChild(2).recursiveDescendants))
-		# Add mute button
-		if controlTypes.State.INVISIBLE not in self.getChild(2).getChild(3).getChild(3).firstChild.states:
-			controls.append(self.getChild(2).getChild(3).getChild(3).firstChild)
-		#@ Dev: include bookmark button
-		fg = api.getForegroundObject()
+		"""
+		Retrieves and caches playback controls using a flatter search 
+		to improve performance and prevent UI lag.
+		"""
+		if hasattr(self, '_cached_controls') and self._cached_controls:
+			return self._cached_controls
+
 		try:
-			bt = fg.simpleNext.simpleNext
-		except:
-			bt = None
-		if bt:
-			controls.append(bt)
-			controls.append(bt.next.next)
-		return controls
+			# Navigate to the main control container
+			# Structure: Main Window -> Central Widget -> Control Bar
+			root = self.getChild(2).getChild(3)
+
+			# Flatten the hierarchy: collect primary children and sub-containers
+			c_list = list(root.children)
+			for i in range(min(3, root.childCount)):
+				child = root.getChild(i)
+				if child:
+					c_list.extend(list(child.children))
+
+			# Filter out structural elements that shouldn't receive focus
+			ignored_roles = {
+				controlTypes.Role.GRIP, 
+				controlTypes.Role.BORDER, 
+				controlTypes.Role.LAYEREDPANE,
+				controlTypes.Role.SEPARATOR
+			}
+
+			controls = [item for item in c_list if item.role not in ignored_roles and not (controlTypes.State.INVISIBLE in item.states)]
+
+			# Add specialized buttons (Mute, Bookmarks) if they are visible
+			try:
+				mute = root.getChild(3).firstChild
+				if mute and controlTypes.State.INVISIBLE not in mute.states:
+					controls.append(mute)
+			except: pass
+
+			if controls:
+				self._cached_controls = controls
+				return self._cached_controls
+		except Exception:
+			# Fallback to empty list if UI structure differs
+			pass
+		return []
 
 	def _get_volumeDisplay(self):
 		return self.getChild(2).getChild(3).getChild(3).getChild(1)
@@ -281,10 +316,27 @@ class VLC_mainWindow(IAccessible):
 		api.setFocusObject(self)
 
 	def event_gainFocus(self):
+		# Clear control cache to keep UI in sync
+		self.__dict__.pop('_cached_controls', None)
 		api.setForegroundObject(self)
-		self.description = ""
-		if not self.focusDialog():
+
+		# Direct call to speak the window name and role immediately
+		# This is the standard way but we avoid deep recursion
+		speakObject(self, reason=controlTypes.OutputReason.FOCUS)
+
+		def finalizeVLCFocus():
+			# Verify we are still in VLC
+			if api.getForegroundObject() != self:
+				return
+
+			if not self.focusDialog():
+				# Pre-fetch the playback controls
+				getattr(self, 'playbackControls', None)
+				# Jump to the last used control (e.g. Play/Pause)
 				self.moveToItem(self.appModule.tpItemIndex)
+
+		# Execute the navigation logic right after the announcement
+		wx.CallAfter(finalizeVLCFocus)
 
 	def composeTime(self, t="00:00"):
 		"Convert time from hh:mm:ss to h hours m minutes s seconds"
@@ -325,11 +377,17 @@ class VLC_mainWindow(IAccessible):
 		return cTime
 
 	def isPlaying(self):
-		"looks in play/pause button to see if it's playing"
-		# Translators: As seen in the button Play/Pause of the interface
-		if _("Pause") in self.playPauseButton.description:
-			return(True)
-		return(False)
+		"""
+		Checks the play/pause button state. 
+		VLC 3 uses the description 'Pause' for both German and English when playing.
+		"""
+		btn = self.playPauseButton
+		if not btn:
+			return False
+		# Check if the button is in a pressed/active state or mentions 'Pause'
+		is_pressed = controlTypes.State.PRESSED in btn.states or controlTypes.State.CHECKED in btn.states
+		# In VLC 3, 'Pause' is the universal term in the description while playing
+		return is_pressed or (_("Pause") in btn.description)
 
 	def isChecked(self, c):
 		">Looks if is checked: c=1=Shuffle and c=2=Repeat"
@@ -548,11 +606,44 @@ class VLC_pane(qt.LayeredPane):
 
 class VLC_spinButton(IAccessible):
 
-	def event_gainFocus(self):
-		ui.message(self.value)
+	def script_tab(self, gesture):
+		oldFocus = api.getFocusObject()
 
-	def event_valueChange(self):
-		ui.message(self.value)
+		gesture.send()
+
+		from core import callLater
+		callLater(30, self._handleTabResult, oldFocus)
+
+	def script_shiftTab(self, gesture):
+		oldFocus = api.getFocusObject()
+
+		gesture.send()
+
+		from core import callLater
+		callLater(30, self._handleTabResult, oldFocus)
+
+	def _handleTabResult(self, oldFocus):
+		newFocus = api.getFocusObject()
+
+		# If focus changed → NVDA already spoke → do nothing
+		if newFocus != oldFocus:
+			return
+
+		if newFocus.role != controlTypes.Role.SPINBUTTON:
+			return
+
+		self._reportSubField()
+
+	def _reportSubField(self):
+		from speech import speakMessage
+
+		if self.name:
+			speakMessage(self.name)
+
+	__gestures = {
+		"kb:Tab": "tab",
+		"kb:shift+Tab": "shiftTab",
+	}
 
 class VLC_mediaInfo(IAccessible):
 
