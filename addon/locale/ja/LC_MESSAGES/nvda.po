@@ -1,0 +1,178 @@
+# VLC Media Player NVDA Add-on Japanese Translation
+# Copyright (C) 2025 NVDA Japanese Team
+# This file is distributed under the same license as the VLC add-on package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: vlc 2025.1.0\n"
+"Report-Msgid-Bugs-To: nvda-translations@groups.io\n"
+"POT-Creation-Date: 2021-06-01 09:38+0200\n"
+"PO-Revision-Date: 2025-01-24 12:00+0900\n"
+"Last-Translator: NVDA Japanese Team\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. TRANSLATORS: category for VLC input gestures
+#. TRANSLATORS: Settings panel title
+#: addon\appModules\vlc.py:53 addon\appModules\vlc.py:226
+#: addon\appModules\vlc.py:627
+msgid "VLC"
+msgstr "VLC"
+
+#. TRANSLATORS: Window or panel that contains the playlist when it is inside main window
+#. TRANSLATORS: Title of the panel that contains the playlist when it is inside main window
+#: addon\appModules\vlc.py:61 addon\appModules\vlc.py:97
+msgid "Playlist"
+msgstr "プレイリスト"
+
+#. TRANSLATORS: The configuration option in NVDA Preferences menu
+#: addon\appModules\vlc.py:68
+msgid "Change VLC appModule settings"
+msgstr "VLCアプリモジュールの設定を変更"
+
+#. TRANSLATORS: message shown in Input gestures dialog for this script
+#: addon\appModules\vlc.py:174
+msgid ""
+"Use it in the main window if tabulating between playback controls stopped "
+"working. It'll tries to bring the focus to the playback control pane to get "
+"it to work again."
+msgstr ""
+"再生コントロール間のタブ移動が機能しなくなった場合、メインウィンドウで使用し"
+"てください。再生コントロールパネルにフォーカスを移動し、再び機能するようにし"
+"ます。"
+
+#. TRANSLATORS: message shown in Input gestures dialog for this script
+#: addon\appModules\vlc.py:182
+msgid ""
+"Toggle verbosity: if enabled, it will announce the elapsed time and volume"
+msgstr ""
+"詳細読み上げの切り替え: 有効にすると、経過時間と音量を読み上げます"
+
+#. TRANSLATORS: Expressing time, several hours, in plural. Maintain the space at the end to separate the next message that will be added.
+#: addon\appModules\vlc.py:291
+#, python-format
+msgid "%d hours "
+msgstr "%d時間 "
+
+#. TRANSLATORS: Expressing time, one hour, in singular. Maintain the space at the end to separate the next message that will be added.
+#: addon\appModules\vlc.py:294
+#, python-format
+msgid "%d hour "
+msgstr "%d時間 "
+
+#. TRANSLATORS: Expressing time, several minutes, in plural. Maintain the space at the end to separate the next message that will be added.
+#: addon\appModules\vlc.py:306
+#, python-format
+msgid "%s%d minutes "
+msgstr "%s%d分 "
+
+#. TRANSLATORS: Expressing time, one minute, in singular. Maintain the space at the end to separate the next message that will be added.
+#: addon\appModules\vlc.py:309
+#, python-format
+msgid "%s%d minute "
+msgstr "%s%d分 "
+
+#. TRANSLATORS: Expressing time, several seconds, in plural.
+#: addon\appModules\vlc.py:312
+#, python-format
+msgid "%s %d seconds"
+msgstr "%s %d秒"
+
+#. TRANSLATORS: Expressing time, one second, in singular.
+#: addon\appModules\vlc.py:315
+#, python-format
+msgid "%s %d second"
+msgstr "%s %d秒"
+
+#. Translators: As seen in the button Play/Pause of the interface
+#: addon\appModules\vlc.py:321
+msgid "Pause"
+msgstr "一時停止"
+
+#. TRANSLATORS: Message when there are no playback controls visible on screen, or the addon can't find them.
+#: addon\appModules\vlc.py:343
+msgid "There are no controls available"
+msgstr "利用可能なコントロールがありません"
+
+#. TRANSLATORS: Message when the playlist is empty and there is no track to play
+#: addon\appModules\vlc.py:376
+msgid "Empty"
+msgstr "空"
+
+#. TRANSLATORS: elapsed time of total time
+#: addon\appModules\vlc.py:383
+#, python-format
+msgid "%s of %s"
+msgstr "%s / %s"
+
+#. TRANSLATORS: When announces that a track is playing
+#: addon\appModules\vlc.py:386
+msgid " playing"
+msgstr " 再生中"
+
+#. TRANSLATORS: message shown in Input gestures dialog for this script
+#: addon\appModules\vlc.py:394
+msgid "Reads the information of the current playback."
+msgstr "現在の再生情報を読み上げます。"
+
+#: addon\appModules\vlc.py:406 addon\appModules\vlc.py:453
+#: addon\appModules\vlc.py:462
+msgid "unchecked"
+msgstr "チェックなし"
+
+#: addon\appModules\vlc.py:447
+msgid "Repeat mode"
+msgstr "リピートモード"
+
+#: addon\appModules\vlc.py:456
+msgid "Shuffle mode"
+msgstr "シャッフルモード"
+
+#: addon\appModules\vlc.py:466
+#, python-format
+msgid "Volume %s"
+msgstr "音量 %s"
+
+#. TRANSLATORS: message shown in Input gestures dialog for this script
+#: addon\appModules\vlc.py:475
+msgid ""
+"Brings panels or dialogs that are displayed on the screen, but NVDA is "
+"unable to focus automatically to the fore."
+msgstr ""
+"画面に表示されているがNVDAが自動的にフォーカスできないパネルやダイアログを"
+"前面に移動します。"
+
+#. TRANSLATORS: To successfully synchronize the cursor when it is moved by words, it is necessary to distinguish the alphanumeric characters of the punctuation signs.
+#. TRANSLATORS: This string should not be translated literally. Should be a list of the special characters that are considered to be alphanumeric in your local alphabet, for example the ñ in Spanish.
+#: addon\appModules\vlc.py:607
+msgid "SpecialAlphanumericCharactersInYourLanguage"
+msgstr "あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをんアイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン漢字人日本語０１２３４５６７８９ＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＴＵＶＷＸＹＺａｂｃｄｅｆｇｈｉｊｋｌｍｎｏｐｑｒｓｔｕｖｗｘｙｚ"
+
+#. TRANSLATORS: Settings dialog title
+#: addon\appModules\vlc.py:611
+msgid "VLC appModule settings"
+msgstr "VLCアプリモジュール設定"
+
+#. TRANSLATORS: Report time checkbox
+#: addon\appModules\vlc.py:614 addon\appModules\vlc.py:630
+msgid "Announce elapsed time and volume"
+msgstr "経過時間と音量を読み上げる"
+
+#. Add-on summary, usually the user visible name of the addon.
+#. Translators: Summary for this add-on to be shown on installation and add-on information.
+#: buildVars.py:17
+msgid "VLC Media Player"
+msgstr "VLC Media Player"
+
+#. Add-on description
+#. Translators: Long description to be shown for this add-on on add-on information from add-ons manager
+#: buildVars.py:20
+msgid ""
+"Provides some accessibility features for VLC Media Player, as improve "
+"navigation  or read status bar"
+msgstr ""
+"VLC Media Playerにナビゲーションの改善やステータスバーの読み上げなどの"
+"アクセシビリティ機能を提供します"
