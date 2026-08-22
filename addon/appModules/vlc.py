@@ -6,6 +6,7 @@
 #Copyright (C) 2015-2018 Javi Dominguez <fjavids@gmail.com>
 
 from .py3compatibility import *
+from .actualizadorRecursos import ActualizadorRecursos
 import appModuleHandler
 import addonHandler
 from NVDAObjects.IAccessible import IAccessible, qt
@@ -78,8 +79,10 @@ class AppModule(appModuleHandler.AppModule):
 			#TRANSLATORS: The configuration option in NVDA Preferences menu
 			self.VLCSettingsItem = self.prefsMenu.Append(wx.ID_ANY, u"VLC...", _("Change VLC appModule settings"))
 			gui.mainFrame.sysTrayIcon.Bind(wx.EVT_MENU, self.onVLCMenu, self.VLCSettingsItem)
+		self._actualizador = ActualizadorRecursos("javidominguez", "vlc", rama="master", intervalo_horas=12)
 
 	def terminate(self):
+		self._actualizador.detener()
 		try:
 			if hasattr(settingsDialogs, 'SettingsPanel'):
 				NVDASettingsDialog.categoryClasses.remove(VLCPanel)
