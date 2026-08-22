@@ -1,26 +1,14 @@
 # VLC Media Player #
 
-* Разработчик: Javi Dominguez
-* Загрузить [стабильную версию][2]
+## Это дополнение предоставляет дополнительные возможности доступности медиа-плеера VLC.
 
-Данное дополнение улучшает поддержку медиа-плеера VLC.
+* Скачать [последний релиз](https://github.com/javidominguez/VLC/releases/latest)
+* Распространяется на условиях Стандартной общественной лицензии GNU (GPL). См. [файл COPYING.txt](https://github.com/javidominguez/VLC/blob/master/COPYING.txt) для получения более подробной информации.
+---------- 
+1. Позволяет перемещаться по элементам управления воспроизведением с помощью клавиш Tab и Shift+Tab. Для активации выбранного элемента управления нажмите Enter.
+2. Читает информацию в строке состояния (нажмите I). Жест можно задать в настройках NVDA.
+3. Произносит прошедшее время при перемотке вперёд и назад с помощью сочетаний клавиш VLC: Control + Стрелка влево/вправо для пропуска 1 минуты и Shift + Стрелка влево/вправо для пропуска 5 секунд. Уровень информативности можно задать в настройках NVDA. Также можно назначить сочетание клавиш для переключения.
+4. Объявляет состояние при изменении режима случайного воспроизведения (клавиша R) и режима повтора (клавиша L).
+5. Некоторые многоуровневые окна и панели NVDA не может автоматически сфокусировать при отображении. Нажмите Control+Tab, чтобы попытаться переместить их на передний план.
 
-1. Allows navigating through the playback controls using Tab and
-   Shift+Tab. To activate a selected control press enter.
-2. Reads status bar information (press I). The gesture can be set up in NVDA
-   preferences.
-3. Says elapsed time when moving back and forward using VLC keystrokes:
-   Control plus left/right arrow to skip 1 minute and Shift plus left/right
-   arrows to skip 5 seconds. You can set the verbosity in the NVDA
-   preferences. You can also assign a keyboard shortcut to toggle it.
-4. Announces state when change random mode (key R) and repeat mode (key L).
-
-* Important note: This addon is optimized for versions of VLC 3.0 and
-  higher; it will not work correctly with earlier versions. To use VLC 2.x
-  [download the old version of the addon.][1]
-
-
-[[!tag dev stable]]
-
-[1]: https://addons.nvda-project.org/files/get.php?file=vlc [2]:
-https://addons.nvda-project.org/files/get.php?file=vlc-18
+* Важное примечание: это дополнение оптимизировано для версий VLC 3.0 и выше; оно не будет корректно работать с более ранними версиями. Для использования VLC 2.x [скачайте старую версию дополнения.](http://addons.nvda-project.org/files/get.php?file=vlc)
